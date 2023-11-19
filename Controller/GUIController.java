@@ -141,7 +141,26 @@ public class GUIController {
 		}
 		
 	}
-
+	
+	public void updateSell(Player player, int fieldNumber) {
+		
+		//update player's score 
+		player.setScore(player.getBeansInField()[fieldNumber].getCoinsEarned(player.getNumBeansInField()[fieldNumber]));
+		
+		//update gui score
+		player.getPanel().getScoreNum().setText(Integer.toString(player.getScore()));
+	
+		//update the field
+		player.getPanel().getField().getCardImages()[fieldNumber].setIcon(new ImageIcon("Images/slotsBtn.png"));
+		player.getPanel().getField().getCardCounter()[fieldNumber].setText("0");
+		
+		//update the user's backend field
+		player.getNumBeansInField()[fieldNumber] = 0;
+		
+		
+	}
+	
+ 
 	//this method will open up all the cards in the hand so the player can discard any card
 	public void enablePlayersHand(Player player) {
 

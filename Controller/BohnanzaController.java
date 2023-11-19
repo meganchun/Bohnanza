@@ -50,18 +50,16 @@ public class BohnanzaController implements ActionListener {
 	
 	public BohnanzaController() {
 		
-		int[] beanometer = {0,2,4,5};
-		
-		Card bean1 = new Card("Red",25,beanometer,"Red.png");
-		Card bean2 = new Card("Soy",25,beanometer,"Soy.png");
-		Card bean3 = new Card("Soy",25,beanometer,"Soy.png");
-		Card bean4 = new Card("Blue",25,beanometer,"Blue.png");
+		Card bean1 = deck.getNumCardMap().get(1);
+		Card bean2 = deck.getNumCardMap().get(2);
+		Card bean3 = deck.getNumCardMap().get(3);
+		Card bean4 = deck.getNumCardMap().get(4);
 		
 		//give player cards in their hand
 		Queue<Card> q = new LinkedList<>();
-		q.add(bean2);
-		q.add(bean2);
-		q.add(bean3);
+		q.add(bean1);
+		q.add(bean1);
+		q.add(bean4);
 
 		Queue<Card> q1 = new LinkedList<>();
 		q1.add(bean3);
@@ -231,8 +229,6 @@ public class BohnanzaController implements ActionListener {
 							JOptionPane.showMessageDialog(gameFrame, currentPlayer.getName() + " Planted","Bean Planted!",
 									    JOptionPane.INFORMATION_MESSAGE, currentPlayer.getPanel().getHand().getPlantIcon());
 
-							
-							
 						}
 						else {
 							JOptionPane.showMessageDialog(gameFrame, 
@@ -351,10 +347,15 @@ public class BohnanzaController implements ActionListener {
 		}
 		
 		
-		//EVENTS FOR SELLING
+		//EVENTS FOR SELLING--------------------------------------------------------------------
 		if (e.getSource() == playerAction.getPanel().getField().getActionBtns()[0] ||
 				e.getSource() == playerAction.getPanel().getField().getActionBtns()[1]) {
 			JOptionPane.showMessageDialog(gameFrame, playerAction.getName() + " Sold Their Beans");
+			
+			if (e.getSource() == playerAction.getPanel().getField().getActionBtns()[0]) 
+				gui.updateSell(playerAction, 0);
+			else 
+				gui.updateSell(playerAction, 1);
 		}
 		
 		//if the player clicks the third field
