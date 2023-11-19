@@ -169,17 +169,14 @@ public class BohnanzaController implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 	
-		Player playerAction;
 		
 		//check which panel the button was clicked in 
 		if (((Component) e.getSource()).getParent().getParent().getParent().getY() == 0) {
-			playerAction = playerOne;
+			currentPlayer = playerOne;
 		}
 		else {
-			playerAction = playerTwo;
+			currentPlayer = playerTwo;
 		}
-		
-		
 		
 		//STEP 1: PLANT OR DISCARD LAST PLAYERS REMAINING DRAWED CARDS
 		//------------------------------------------------------------
@@ -210,9 +207,10 @@ public class BohnanzaController implements ActionListener {
 				if (numOfPlants < 2) {
 						
 					if (currentPlayer.getPanel().getHand().getCardsInHand()[0].isSelected()){
-						
-						HumanPlayer player = (HumanPlayer) currentPlayer;
 				
+						HumanPlayer player = (HumanPlayer) currentPlayer;
+						
+						
 						//if the plant is a valid move on the field
 						if (player.plant(currentPlayer.getHand().peek())) {
 							
@@ -256,12 +254,12 @@ public class BohnanzaController implements ActionListener {
 		}
 	
 			//if the player clicks the discard button
-			if (e.getSource() == playerAction.getPanel().getHand().getDiscardBtn()) {
+			if (e.getSource() == currentPlayer.getPanel().getHand().getDiscardBtn()) {
 				
 				Queue<Card> tempHand = new LinkedList();
 				
 				//check through each button in the players hand
-				for (JRadioButton b : playerAction.getPanel().getHand().getCardsInHand()) {
+				for (JRadioButton b : currentPlayer.getPanel().getHand().getCardsInHand()) {
 					//if a card is selected call the checkCardTypeSelected method
 					if (b.isSelected()) {
 						cardDiscard = checkCardTypeSelected(b.getIcon().toString());
@@ -348,35 +346,58 @@ public class BohnanzaController implements ActionListener {
 		
 		
 		//EVENTS FOR SELLING--------------------------------------------------------------------
-		if (e.getSource() == playerAction.getPanel().getField().getActionBtns()[0] ||
-				e.getSource() == playerAction.getPanel().getField().getActionBtns()[1]) {
-			JOptionPane.showMessageDialog(gameFrame, playerAction.getName() + " Sold Their Beans");
+		if (e.getSource() == currentPlayer.getPanel().getField().getActionBtns()[0] ||
+				e.getSource() == currentPlayer.getPanel().getField().getActionBtns()[1]) {
 			
-			if (e.getSource() == playerAction.getPanel().getField().getActionBtns()[0]) 
-				gui.updateSell(playerAction, 0);
-			else 
-				gui.updateSell(playerAction, 1);
+			HumanPlayer player = (HumanPlayer) currentPlayer;
+			
+			if (e.getSource() == currentPlayer.getPanel().getField().getActionBtns()[0] && 	
+					(player.sell(0))) {
+				gui.updateSell(currentPlayer, 0);
+				JOptionPane.showMessageDialog(gameFrame, currentPlayer.getName() + " Sold Their Beans");
+			}
+			else if (e.getSource() == currentPlayer.getPanel().getField().getActionBtns()[1] && 	
+					(player.sell(1))) {
+				gui.updateSell(currentPlayer, 1);
+				JOptionPane.showMessageDialog(gameFrame, currentPlayer.getName() + " Sold Their Beans");
+			}
+			else {
+				JOptionPane.showMessageDialog(gameFrame, 
+						"Nothing to sell! Sell a field with beans planted.",
+						"Unable To Process Request",JOptionPane.ERROR_MESSAGE);
+			}
 		}
 		
 		//if the player clicks the third field
-		if (e.getSource() == playerAction.getPanel().getField().getActionBtns()[2]) {
+		if (e.getSource() == currentPlayer.getPanel().getField().getActionBtns()[2]) {
 		
 			//if the third field is not owned
-			if (playerAction.isThirdFieldOwned() == false) {
+			if (currentPlayer.isThirdFieldOwned() == false) {
 				//if the player can't afford the field
-				if (playerAction.getScore() < -1) {
+				if (currentPlayer.getScore() <= 0) {
 					JOptionPane.showMessageDialog(gameFrame, 
 							"You Can Not Afford This Field","Unable To Process Request",JOptionPane.ERROR_MESSAGE);
-				
 				}
 				else {
-					gui.unlockField(playerAction);
-					JOptionPane.showMessageDialog(gameFrame, playerAction.getName() + " Bought A Field");
+					gui.unlockField(currentPlayer);
+					JOptionPane.showMessageDialog(gameFrame, currentPlayer.getName() + " Bought A Field");
 				}
 			}
 			//if the third field is owned
 			else {
-				JOptionPane.showMessageDialog(gameFrame, playerAction.getName() + " Sold Their Beans");
+				
+				HumanPlayer player = (HumanPlayer) currentPlayer;
+				//if the field has beans to be sold
+				if (player.sell(2)) {
+					gui.updateSell(currentPlayer, 1);
+					JOptionPane.showMessageDialog(gameFrame, currentPlayer.getName() + " Sold Their Beans");
+				}
+				//if there are no beans to sell
+				else {
+					JOptionPane.showMessageDialog(gameFrame, 
+							"Nothing to sell! Sell a field with beans planted.",
+							"Unable To Process Request",JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		}
 		

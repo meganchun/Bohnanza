@@ -14,7 +14,7 @@ public interface Turn {
 	
 	public boolean purchaseBeanField(int coins);
 	
-	public void sell();
+	public boolean sell(int fieldNum);
 	
 	public void turnEnd();
 

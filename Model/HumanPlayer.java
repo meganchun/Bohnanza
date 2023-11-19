@@ -56,8 +56,13 @@ public class HumanPlayer extends Player implements Turn {
 	}
 
 	@Override
-	public void sell() {
-		// TODO Auto-generated method stub
+	public boolean sell(int fieldNum) {
+		
+		if (this.getNumBeansInField()[fieldNum] != 0) {
+			return true;
+		}
+		else 
+			return false;
 		
 	}
 
