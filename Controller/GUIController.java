@@ -1,17 +1,13 @@
 //Megan Chun
 package Controller;
 
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
-import java.util.Map;
 import java.util.Queue;
 
 import Model.Card;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import Model.Player;
@@ -30,58 +26,75 @@ public class GUIController {
 		player.getPanel().getScoreNum().setText(Integer.toString(player.getScore()));
 	}
 	
-	public void updateHand(Player player) {
+	public static JRadioButton[] updateHand(Player player) {
+		
+		String[] typeOfBeans = {"Garden","Red","Black-eyed","Soy","Green","Stink","Chili","Blue"};
+		
+		Queue<Card> tempHand = player.getHand();
+		
+	
+		//store the number of each type of bean is in the hand 
+		int[] typeOfBeansInHand = new int[8];
+		
+		for (Card name : tempHand) {
+			
+			//CHANGE TO REFLECT A CARD 
+			if (name.getBeanType().equals("Garden")) {
+				typeOfBeansInHand[0]++;
+			}
+			else if (name.getBeanType().equals("Red")) {
+				typeOfBeansInHand[1]++;
+			}
+			else if (name.getBeanType().equals("Black-eyed")) {
+				typeOfBeansInHand[2]++;
+			}
+			else if (name.getBeanType().equals("Soy")) {
+				typeOfBeansInHand[3]++;
+			}
+			else if (name.getBeanType().equals("Green")) {
+				typeOfBeansInHand[4]++;
+			}
+			else if (name.getBeanType().equals("Stink")) {
+				typeOfBeansInHand[5]++;
+			}
+			else if (name.getBeanType().equals("Chili")) {
+				typeOfBeansInHand[6]++;
+			}
+			else if (name.getBeanType().equals("Blue")) {
+				typeOfBeansInHand[7]++;
+			}
+		}
+		
+		//get number of types of bean
+		int numTypesOfBeans = 0;
+		
+		for (int i = 0; i < 8; i++) {
+			if (typeOfBeansInHand[i] > 0) {
+				numTypesOfBeans++;
+			}
+		}
+		
+		JRadioButton[] btns = new JRadioButton[numTypesOfBeans];
 		
 		int index = 0;
-		
-		player.getPanel().getHand().getCardsInHand()[player.getHand().size()-1].setVisible(false);
-		
-		for (Card c : player.getHand()) {
 
-			String name = c.getBeanType();
-			ImageIcon cardImage = new ImageIcon("Images/Beans/"+name+".png"); 
+		for (int i = 0; i < typeOfBeansInHand.length; i++) {
 			
-			player.getPanel().getHand().getCardsInHand()[index].setText(name);
-			player.getPanel().getHand().getCardsInHand()[index].setIcon(cardImage);
-			
-			index++;
+			if (typeOfBeansInHand[i] > 0) {
+				String name = typeOfBeans[i] + " x" + typeOfBeansInHand[i];  //typeOfBeans[i].getName()
+				
+				ImageIcon cardImage = new ImageIcon("Images/Beans/"+typeOfBeans[i]+".png"); //
+				btns[index++]= new JRadioButton(name, cardImage);
+			}
 		}
+		
+		return btns;
 		
 	}
 	
-	public void updateField(Player player, Card bean) {
+	public void updateField(Player player) {
 		
-		boolean beanTypePlanted = false;
-
-		
-		for (int i = 0; i < 3; i++) {
-			
-			//if the bean already exists in the field
-			if (player.getBeansInField()[i] == bean && player.getNumBeansInField()[i] != 0) {
-				player.getPanel().getField().getCardCounter()[i].setText(
-						Integer.toString(player.getNumBeansInField()[i]+1));
-				player.getNumBeansInField()[i] += 1;
-				beanTypePlanted = true;
-				break;
-			}
-		}
-		
-		if (!beanTypePlanted) {
-			for (int i = 0; i < 3; i++) {
-				
-				//if there is an empty field
-				if (player.getNumBeansInField()[i] == 0) {
-					System.out.println(i);
-					player.getPanel().getField().getCardCounter()[i].setText(
-							Integer.toString(player.getNumBeansInField()[i]+1));
-					player.getPanel().getField().getCardImages()[i].setIcon(new ImageIcon(
-							"Images/Beans/"+bean.getFileName()));
-					player.getNumBeansInField()[i] += 1;
-					player.getBeansInField()[i] = bean;
-					break;
-				}
-			}
-		}
+	
 	}
 	
 	public void discardCardStep(Player player) {
@@ -141,26 +154,7 @@ public class GUIController {
 		}
 		
 	}
-	
-	public void updateSell(Player player, int fieldNumber) {
-		
-		//update player's score 
-		player.setScore(player.getBeansInField()[fieldNumber].getCoinsEarned(player.getNumBeansInField()[fieldNumber]));
-		
-		//update gui score
-		player.getPanel().getScoreNum().setText(Integer.toString(player.getScore()));
-	
-		//update the field
-		player.getPanel().getField().getCardImages()[fieldNumber].setIcon(new ImageIcon("Images/slotsBtn.png"));
-		player.getPanel().getField().getCardCounter()[fieldNumber].setText("0");
-		
-		//update the user's backend field
-		player.getNumBeansInField()[fieldNumber] = 0;
-		
-		
-	}
-	
- 
+
 	//this method will open up all the cards in the hand so the player can discard any card
 	public void enablePlayersHand(Player player) {
 

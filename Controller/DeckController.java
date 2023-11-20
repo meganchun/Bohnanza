@@ -14,7 +14,7 @@ public class DeckController {
 	// instance variables...
 	private Map<Integer, Card> numCardMap;
 	private Stack<Card> cardList = new Stack<Card>();
-	private Stack<Card> garbageList = new Stack<Card>();
+	private Stack<Card> discardList = new Stack<Card>();
 	private int garbageKey = 0;
 
 	// initialize array constants for the coins
@@ -50,9 +50,6 @@ public class DeckController {
 		numCardMap.put(6, new Card("Chili", 18, chiliArr, "Chili.png"));
 		numCardMap.put(7, new Card("Blue", 20, blueArr, "Blue.png"));
 
-		// initialize a key for the card map
-		int key = 1;
-
 		// loop through the bean map using a for-each
 		for (Map.Entry<Integer, Card> map : numCardMap.entrySet()) {
 
@@ -61,9 +58,6 @@ public class DeckController {
 				// add the Card object to the stack list
 				cardList.add(map.getValue());
 			}
-
-			// increment the key after the iteration
-			key += 1;
 		}
 	}
 
@@ -75,7 +69,10 @@ public class DeckController {
 		Map<Integer, Card> numCardMap = new HashMap<Integer, Card>();
 		
 		numCardMap.put(garbageKey, bean);
-		garbageList.add(numCardMap.get(garbageKey));
+		discardList.add(numCardMap.get(garbageKey));
+		
+		System.out.println("Cards in discard: " + garbageKey);
+		System.out.println(discardList.firstElement());
 	}
 
 	public Card[] drawTwoCards() {
@@ -107,7 +104,6 @@ public class DeckController {
 		if (cardList.empty()) {
 			return true;
 		}
-
 		
 		return false;
 	}
@@ -121,7 +117,7 @@ public class DeckController {
 	public Card popFromGarbage() {
 
 		// pop a card from the garbage list stack
-		return cardList.pop();
+		return discardList.pop();
 	}
 
 	public Map<Integer, Card> getNumCardMap() {

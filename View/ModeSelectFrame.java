@@ -1,4 +1,4 @@
-//Megan Chun
+//Megan Chun, Aaron Su
 
 package View;
 
@@ -12,18 +12,12 @@ import javax.swing.*;
 import Controller.BohnanzaController;
 public class ModeSelectFrame extends JFrame implements ActionListener{
 	
-	JButton startBtn;
-	JButton exitBtn;
-	JButton easyBtn;
-	JButton difficultBtn;
+	private JButton startBtn;
+	private JButton exitBtn;
+	private JButton easyBtn;
+	private JButton difficultBtn;
 	
 	public ModeSelectFrame() {
-		
-		this.setTitle("Mode Select"); 
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
-		this.setLocationRelativeTo(null);
-		this.setResizable(false); 
-		this.setSize(1000, 700); 
 	
 		//Megan - Update needed, Benjamin's version did not work
 		JLabel background = new JLabel(new ImageIcon("Images/modeSelectBackground.png"));
@@ -43,6 +37,7 @@ public class ModeSelectFrame extends JFrame implements ActionListener{
 		Icon exitImage = new ImageIcon("Images/backBtn.png");
 		exitBtn = new JButton(exitImage);
 		exitBtn.setBounds(25,25,50, 50);
+		exitBtn.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		exitBtn.addActionListener(this);
 		background.add(exitBtn);
 
@@ -58,6 +53,12 @@ public class ModeSelectFrame extends JFrame implements ActionListener{
 		difficultBtn.addActionListener(this);
 		background.add(difficultBtn);
 		
+		
+		this.setTitle("Mode Select"); 
+		this.setResizable(false); 
+		this.setSize(1000, 700); 
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 		
 		
@@ -84,7 +85,6 @@ public class ModeSelectFrame extends JFrame implements ActionListener{
 	
 		else if (e.getSource() == difficultBtn) {
 			this.dispose();//gets rid of the previous window
-			//SurveyMenu surveyWindow = new SurveyMenu();
 		}	
 	}
  

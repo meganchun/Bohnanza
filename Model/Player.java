@@ -11,23 +11,22 @@ public class Player {
 	
 	private String name;
 	private Queue<Card> hand;
-	private Card[] beansInField;
-	private int[] numBeansInField;
+	private Map<Card, Integer> field;
 	private boolean thirdFieldOwned;
 	private int score;
 	private int currentStage;
 	private PlayerPanel panel;
 
-	public Player(String name, Queue<Card> hand, Card[] beansInField, int[] numBeansInField, boolean thirdFieldOwned,
-			int score, int currentStage) {
+	public Player(String name, Queue<Card> hand, Map<Card, Integer> field, boolean thirdFieldOwned, int score,
+			int currentStage) {
 		super();
 		this.name = name;
 		this.hand = hand;
-		this.beansInField = beansInField;
-		this.numBeansInField = numBeansInField;
+		this.field = field;
 		this.thirdFieldOwned = thirdFieldOwned;
 		this.score = score;
 		this.currentStage = currentStage;
+
 	}
 
 	//GETTERS AND SETTERS
@@ -47,20 +46,12 @@ public class Player {
 		this.hand = hand;
 	}
 
-	public Card[] getBeansInField() {
-		return beansInField;
+	public Map<Card, Integer> getField() {
+		return field;
 	}
 
-	public void setBeansInField(Card[] beansInField) {
-		this.beansInField = beansInField;
-	}
-
-	public int[] getNumBeansInField() {
-		return numBeansInField;
-	}
-
-	public void setNumBeansInField(int[] numBeansInField) {
-		this.numBeansInField = numBeansInField;
+	public void setField(Map<Card, Integer> field) {
+		this.field = field;
 	}
 
 	public boolean isThirdFieldOwned() {

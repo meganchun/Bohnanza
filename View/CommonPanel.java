@@ -1,5 +1,6 @@
-//Aaron Su
-
+/* Aaron Su
+ * 
+ */
 package View;
 
 import javax.swing.*;
@@ -8,28 +9,34 @@ import javax.swing.*;
 public class CommonPanel extends JPanel {
 
 	// instance variables
-	private JButton garbageDeck = new JButton();
+	private JButton discardDeck = new JButton();
 	private JButton deck = new JButton();
 	private JButton[][] slots = new JButton[1][3];
 	private JButton discardButton = new JButton();
+	private JButton endExtendBtn = new JButton();
 
 	// constructor
 	public CommonPanel() {
 		setLayout(null);
 
 		// set images for the JButtons
-		garbageDeck.setIcon(new ImageIcon("Images/garbageDeck.png"));
-		deck.setIcon(new ImageIcon("Images/cardDeck.png"));
-		discardButton.setIcon(new ImageIcon("Images/discardBtn.png"));
+		discardDeck.setIcon(new ImageIcon("Images/discardDeck.png"));
+		deck.setIcon(new ImageIcon("Images/Beans/Back.png"));
+		discardButton.setIcon(new ImageIcon("Images/discardCardBtn.png"));
+		endExtendBtn.setIcon(new ImageIcon("Images/extendedTurnEnd.png"));
 
 		// remove the background from every button
-		garbageDeck.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		discardDeck.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		deck.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		discardButton.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		endExtendBtn.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		
+		discardDeck.setEnabled(false);
+		endExtendBtn.setEnabled(false);
 
 		// pack the JButtons by settingBounds
-		garbageDeck.setBounds(86, 35, 110, 153);
-		add(garbageDeck);
+		discardDeck.setBounds(86, 35, 110, 153);
+		add(discardDeck);
 		deck.setBounds(283, 35, 110, 153);
 		add(deck);
 
@@ -47,19 +54,29 @@ public class CommonPanel extends JPanel {
 		}
 
 		// pack after the slots JButtons are packed
-		discardButton.setBounds(869, 50, 60, 60);
+		discardButton.setBounds(860, 70, 116, 35);
 		add(discardButton);
+		endExtendBtn.setBounds(860, 120, 116, 35);
+		add(endExtendBtn);
 
 		setOpaque(false);
 	}
 
 	// getters and setters
-	public JButton getGarbageDeck() {
-		return garbageDeck;
+	public JButton getEndExtendBtn() {
+		return endExtendBtn;
 	}
 
-	public void setGarbageDeck(JButton garbageDeck) {
-		this.garbageDeck = garbageDeck;
+	public void setEndExtendBtn(JButton endExtendBtn) {
+		this.endExtendBtn = endExtendBtn;
+	}
+
+	public JButton getDiscardDeck() {
+		return discardDeck;
+	}
+
+	public void setDiscardDeck(JButton discardDeck) {
+		this.discardDeck = discardDeck;
 	}
 
 	public JButton getDeck() {
@@ -84,10 +101,6 @@ public class CommonPanel extends JPanel {
 
 	public void setDiscardButton(JButton discardButton) {
 		this.discardButton = discardButton;
-	}
-
-	public void displayDrawnCards() {
-
 	}
 
 }

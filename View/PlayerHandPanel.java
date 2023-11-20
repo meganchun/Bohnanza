@@ -47,9 +47,14 @@ public class PlayerHandPanel extends JPanel {
 		
 		setLayout(new FlowLayout(FlowLayout.LEFT));
 		
+		handPanel = new JPanel();
+		handPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+		handPanel.setBackground(new Color(116,65,35));
+		handPanel.setPreferredSize(new Dimension(1500, 160));
+		
 		addCards(player);
 		
-		handScrollPane = new JScrollPane(handPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		handScrollPane = new JScrollPane(handPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		handScrollPane.setOpaque(false);
 		handScrollPane.setPreferredSize(new Dimension(250, 180));
 		add(handScrollPane);
@@ -120,18 +125,9 @@ public class PlayerHandPanel extends JPanel {
 	public void setPlantIcon(Icon plantIcon) {
 		this.plantIcon = plantIcon;
 	}
-	public JPanel getHandPanel() {
-		return handPanel;
-	}
-
-	public void setHandPanel(JPanel handPanel) {
-		this.handPanel = handPanel;
-	}
 	
 	//UTLITLY METHODS	
 
-
-	
 
 	public void addItemListeners(JRadioButton[] buttons) {
 		for (JRadioButton b : buttons) {
@@ -151,34 +147,16 @@ public class PlayerHandPanel extends JPanel {
 	
 	public void addCards(Player player) {
 
-		handPanel = new JPanel();
-		handPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-		handPanel.setBackground(new Color(116,65,35));
-		handPanel.setPreferredSize(new Dimension(1500, 160));
-		
 		int x = 0; 
 		
+		//if the game has just started, there are no cards to add
 		if (!player.getHand().isEmpty()) {
-			
 			//add the buttons to the panel and change its colour/font
 			
-			Queue<Card> tempHand = player.getHand();
+			setCardsInHand(GUIController.updateHand(player));
 			
-			JRadioButton[] btns = new JRadioButton[tempHand.size()];
-
-			int index = 0;
-			
-			for (Card c : tempHand ) {
-
-				String name = c.getBeanType();
-				ImageIcon cardImage = new ImageIcon("Images/Beans/"+name+".png"); //
-				btns[index++] = new JRadioButton(name, cardImage);
-			
-			}
-		
-			setCardsInHand(btns);
-			
-			for (JRadioButton b : cardsInHand) {
+			for (JRadioButton b : getCardsInHand()) {
+				
 				b.setForeground(Color.WHITE);
 				b.setFont(new Font("Helvetica", Font.BOLD, 12));
 				b.setBounds(x, 50, 111, 154);

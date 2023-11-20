@@ -10,9 +10,9 @@ import View.PlayerPanel;
 
 public class HumanPlayer extends Player implements Turn {
 
-	public HumanPlayer(String name, Queue<Card> hand, Card[] beansInField, int[] numBeansInField, boolean thirdFieldOwned,
+	public HumanPlayer(String name, Queue<Card> hand, Map<Card, Integer> field, boolean thirdFieldOwned,
 			int score, int currentStage) {
-		super(name, hand, beansInField, numBeansInField, thirdFieldOwned, score, currentStage);
+		super(name, hand, field, thirdFieldOwned, score, currentStage);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -23,18 +23,9 @@ public class HumanPlayer extends Player implements Turn {
 	}
 
 	@Override
-	public boolean plant(Card bean) {
+	public boolean plant() {
 		// TODO Auto-generated method stub
-	
-		for (int i = 0; i < 3; i++) {
-			
-			if (bean == this.getBeansInField()[i] || this.getNumBeansInField()[i] == 0) {
-				return true;
-			}
-		}
-		
 		return false;
-		
 	}
 
 	@Override
@@ -56,13 +47,8 @@ public class HumanPlayer extends Player implements Turn {
 	}
 
 	@Override
-	public boolean sell(int fieldNum) {
-		
-		if (this.getNumBeansInField()[fieldNum] != 0) {
-			return true;
-		}
-		else 
-			return false;
+	public void sell() {
+		// TODO Auto-generated method stub
 		
 	}
 

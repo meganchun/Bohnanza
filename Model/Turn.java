@@ -6,7 +6,7 @@ public interface Turn {
 
 	public void startTurn();
 	
-	boolean plant(Card bean);
+	public boolean plant();
 	
 	public String discard();
 	
@@ -14,9 +14,7 @@ public interface Turn {
 	
 	public boolean purchaseBeanField(int coins);
 	
-	public boolean sell(int fieldNum);
+	public void sell();
 	
 	public void turnEnd();
-
-	
 }
