@@ -9,7 +9,7 @@ import java.util.Queue;
 import View.PlayerPanel;
 
 public class HumanPlayer extends Player implements Turn {
-
+	
 	public HumanPlayer(String name, Queue<Card> hand, Card[] beansInField, int[] numBeansInField, boolean thirdFieldOwned,
 			int score, int currentStage) {
 		super(name, hand, beansInField, numBeansInField, thirdFieldOwned, score, currentStage);
@@ -46,14 +46,8 @@ public class HumanPlayer extends Player implements Turn {
 	}
 
 	@Override
-	public String discard() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public String extendedTurn() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -67,10 +61,24 @@ public class HumanPlayer extends Player implements Turn {
 	public boolean sell(int fieldNum) {
 		
 		if (this.getNumBeansInField()[fieldNum] != 0) {
-			return true;
+			
+			//if you are trying to sell a field with only one bean...
+			//make sure the other fields have only one bean
+			if (this.getNumBeansInField()[fieldNum] == 1) {
+				
+				for (int i = 0; i < 3; i++) {
+					if (this.getNumBeansInField()[fieldNum] > 1)
+						return false;
+				}
+				
+				return true;
+			}
+			else 
+				return true;
 		}
 		else 
 			return false;
+	
 		
 	}
 

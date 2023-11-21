@@ -32,6 +32,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.plaf.synth.SynthOptionPaneUI;
 
+import Model.AIPlayer;
 import Model.Card;
 import Model.HumanPlayer;
 import Model.Player;
@@ -63,7 +64,7 @@ public class BohnanzaController implements ActionListener {
 	
 	Card cardDiscard;
 	
-	public BohnanzaController() {
+	public BohnanzaController(String mode) {
 		
 		playMusic("Audio/backgroundMusic.wav");
 		
@@ -87,8 +88,18 @@ public class BohnanzaController implements ActionListener {
 		
 		//-------------------------------------------------
 		//create two players
-		playerOne = new HumanPlayer(ModeSelectFrame.strNameOne,q,b1,numB1,false,0,1);
-		playerTwo = new HumanPlayer(ModeSelectFrame.strNameTwo,q1,b2,numB2,false,0,1);
+		if (mode.equals("pvp")) {
+			playerOne = new HumanPlayer(ModeSelectFrame.strNameOne,q,b1,numB1,false,0,1);
+			playerTwo = new HumanPlayer(ModeSelectFrame.strNameTwo,q1,b2,numB2,false,0,1);
+		}
+		else if (mode.equals("easy")) {
+			playerOne = new HumanPlayer(ModeSelectFrame.strNameOne,q,b1,numB1,false,0,1);
+			playerTwo = new AIPlayer(ModeSelectFrame.strNameTwo,q1,b2,numB2,false,0,1,"easy");
+		}
+		else {
+			playerOne = new HumanPlayer(ModeSelectFrame.strNameOne,q,b1,numB1,false,0,1);
+			playerTwo = new AIPlayer(ModeSelectFrame.strNameTwo,q1,b2,numB2,false,0,1,"hard");
+		}
 		
 		//create a new game frame
 		gameFrame = new GameFrame();
@@ -97,8 +108,64 @@ public class BohnanzaController implements ActionListener {
 		playerOne.setPanel(gameFrame.getPlayerOnePanel());
 		playerTwo.setPanel(gameFrame.getPlayerTwoPanel());
 		
-		//add action listeners to all the components
-		addActionListeners();
+		//add action listeners to common panel
+		//action listeners for the common panel
+		gameFrame.getCommonPanel().getDeck().addActionListener(this);
+		gameFrame.getCommonPanel().getDiscardButton().addActionListener(this);
+		gameFrame.getCommonPanel().getEndExtendBtn().addActionListener(this);
+		gameFrame.getCommonPanel().getDiscardDeck().addActionListener(this);
+
+		//Aaron ----
+		// Create action listeners for each of the 3 cards drawn from the deck
+		for (int i = 0; i < 3; i++) {
+			int index = i;
+			gameFrame.getCommonPanel().getSlots()[0][i].addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// add the cards to hand and disable them so they can't be added twice
+					
+					Card cardSelected = checkCardTypeSelected(gameFrame.getCommonPanel().getSlots()[0][index].getIcon().toString());
+					
+					System.out.println(cardSelected.getBeanType());
+				
+					HumanPlayer player = (HumanPlayer) currentPlayer;
+					
+					//if the plant is a valid move on the field
+					if (player.plant(cardSelected)) {
+						//update the field
+						gui.updateField(currentPlayer, cardSelected);
+						
+						
+						gameFrame.getCommonPanel().getSlots()[0][index].setEnabled(false);
+						gameFrame.getCommonPanel().getSlots()[0][index].setIcon(new ImageIcon("Images/slotsBtn.png"));
+						
+						JOptionPane.showMessageDialog(gameFrame, currentPlayer.getName() + " Planted","Bean Planted!",
+								    JOptionPane.INFORMATION_MESSAGE, currentPlayer.getPanel().getHand().getPlantIcon());
+					}
+					else {
+						JOptionPane.showMessageDialog(gameFrame, 
+								"You can not plant this bean! Ensure your field has room.",
+								"Unable To Process Request",JOptionPane.ERROR_MESSAGE);
+					}
+					
+				}
+			});
+		}
+		///---- 
+		
+		//if player versus player, add action listeners to both panels
+		if (mode.equals("pvp")) {
+			
+			addActionListeners(playerOne);
+			addActionListeners(playerTwo);
+		}
+		//if it is player versus computer, only add action listeners to the first player panel
+		else {
+			addActionListeners(playerOne);
+		}
+		
+		
 		
 		//set the current player to player one
 		currentPlayer = playerOne;
@@ -143,14 +210,12 @@ public class BohnanzaController implements ActionListener {
 		this.gui = gui;
 	}
 	
-	public void addActionListeners() {
+	public void addActionListeners(Player player) {
 		
 		
 		//add action listeners for both panels 
 		
-		PlayerPanel[] panels = {gameFrame.getPlayerOnePanel(),gameFrame.getPlayerTwoPanel()};
-		
-		for (PlayerPanel p : panels) {
+			PlayerPanel p = player.getPanel();
 			
 			p.getHand().getPlantBtn().addActionListener(this);
 			p.getHand().getDiscardBtn().addActionListener(this);
@@ -169,52 +234,8 @@ public class BohnanzaController implements ActionListener {
 			for (int i = 0; i < 3; i++) {
 				p.getField().getActionBtns()[i].addActionListener(this);
 			}
-		}
 		
-		//action listeners for the common panel
-		gameFrame.getCommonPanel().getDeck().addActionListener(this);
-		gameFrame.getCommonPanel().getDiscardButton().addActionListener(this);
-		gameFrame.getCommonPanel().getEndExtendBtn().addActionListener(this);
-		gameFrame.getCommonPanel().getDiscardDeck().addActionListener(this);
-		
-		//Aaron ----
-		// Create action listeners for each of the 3 cards drawn from the deck
-		for (int i = 0; i < 3; i++) {
-			int index = i;
-			gameFrame.getCommonPanel().getSlots()[0][i].addActionListener(new ActionListener() {
 
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					// add the cards to hand and disable them so they can't be added twice
-					
-					Card cardSelected = checkCardTypeSelected(gameFrame.getCommonPanel().getSlots()[0][index].getIcon().toString());
-				
-					HumanPlayer player = (HumanPlayer) currentPlayer;
-					
-					//if the plant is a valid move on the field
-					if (player.plant(cardSelected)) {
-						//update the field
-						gui.updateField(currentPlayer, cardSelected);
-						
-						
-						gameFrame.getCommonPanel().getSlots()[0][index].setEnabled(false);
-						gameFrame.getCommonPanel().getSlots()[0][index].setIcon(new ImageIcon("Images/slotsBtn.png"));
-						
-						JOptionPane.showMessageDialog(gameFrame, currentPlayer.getName() + " Planted","Bean Planted!",
-								    JOptionPane.INFORMATION_MESSAGE, currentPlayer.getPanel().getHand().getPlantIcon());
-						
-
-					}
-					else {
-						JOptionPane.showMessageDialog(gameFrame, 
-								"You can not plant this bean! Ensure your field has room.",
-								"Unable To Process Request",JOptionPane.ERROR_MESSAGE);
-					}
-					
-					
-				}
-			});
-		}
 		//-----------
 	}
 	
@@ -222,6 +243,9 @@ public class BohnanzaController implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
+		
+
+		
 	
 		playMusic("Audio/buttonSound.wav");
 		
@@ -511,6 +535,10 @@ public class BohnanzaController implements ActionListener {
 						if (!(gameFrame.getCommonPanel().getSlots()[0][i].getIcon().toString().equals("Images/slotsBtn.png"))) {
 							gameFrame.getCommonPanel().getSlots()[0][i].setEnabled(true);
 						}
+					}
+					
+					if (currentPlayer instanceof AIPlayer) {
+						
 					}
 				}
 			}

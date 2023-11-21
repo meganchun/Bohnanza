@@ -11,6 +11,8 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 
 import Controller.BohnanzaController;
+import Model.HumanPlayer;
+import Model.Player;
 public class ModeSelectFrame extends JFrame implements ActionListener{
 	
 	//instance variables
@@ -24,6 +26,9 @@ public class ModeSelectFrame extends JFrame implements ActionListener{
 	
 	private JTextField nameOne;
 	private JTextField nameTwo;
+	
+	private JLabel playerPlayerImage;
+	private JLabel playerComputerImage;
 	
 	public static String strNameOne;
 	public static String strNameTwo;
@@ -66,6 +71,26 @@ public class ModeSelectFrame extends JFrame implements ActionListener{
 		nameTwo.setBounds(58, 250, 217, 48);
 		modeBackgroundOne.add(nameTwo);
 		
+		playerPlayerImage = new JLabel(new ImageIcon("Images/playerPlayer.png"));
+		playerPlayerImage.setBounds(98, 50, 133, 99);
+		modeBackgroundOne.add(playerPlayerImage);
+		
+		JLabel playerPlayerText = new JLabel("Player vs Player");
+		playerPlayerText.setFont(new Font("Helvetica", Font.BOLD, 20));
+		playerPlayerText.setForeground(new Color(157,197,62));
+		playerPlayerText.setBounds(90, 150, 200, 50);
+		modeBackgroundOne.add(playerPlayerText);
+		
+		playerComputerImage = new JLabel(new ImageIcon("Images/playerComputer.png"));
+		playerComputerImage.setBounds(83, 50, 170, 99);
+		modeBackgroundTwo.add(playerComputerImage);
+		
+		JLabel playerComputerText = new JLabel("Player vs Computer");
+		playerComputerText.setFont(new Font("Helvetica", Font.BOLD, 20));
+		playerComputerText.setForeground(new Color(157,197,62));
+		playerComputerText.setBounds(70, 150, 200, 50);
+		modeBackgroundTwo.add(playerComputerText);
+		
 		Icon startImage = new ImageIcon("Images/startBtn.png");
 		startBtn = new JButton(startImage);
 		startBtn.setBounds(58, 325, 217, 48);
@@ -81,13 +106,13 @@ public class ModeSelectFrame extends JFrame implements ActionListener{
 
 		Icon easyImage = new ImageIcon("Images/easyBtn.png");
 		easyBtn = new JButton(easyImage);
-		easyBtn.setBounds(58, 225, 217, 48);
+		easyBtn.setBounds(58, 250, 217, 48);
 		easyBtn.addActionListener(this);
 		modeBackgroundTwo.add(easyBtn);
 		
 		Icon difficultImage = new ImageIcon("Images/difficultBtn.png");
 		difficultBtn = new JButton(difficultImage);
-		difficultBtn.setBounds(58, 300, 217, 48);
+		difficultBtn.setBounds(58, 325, 217, 48);
 		difficultBtn.addActionListener(this);
 		modeBackgroundTwo.add(difficultBtn);
 		
@@ -103,7 +128,7 @@ public class ModeSelectFrame extends JFrame implements ActionListener{
 			strNameOne = nameOne.getText();
 			strNameTwo = nameTwo.getText();
 			
-			BohnanzaController bc = new BohnanzaController();
+			BohnanzaController bc = new BohnanzaController("pvp");
 			this.dispose(); //gets rid of the previous window
 			
 		}
@@ -114,11 +139,13 @@ public class ModeSelectFrame extends JFrame implements ActionListener{
 		}	
 		
 		else if (e.getSource() == easyBtn) {
+			
+			BohnanzaController bc = new BohnanzaController("pvce");
 			this.dispose();//gets rid of the previous window
-		
 		}	
 	
 		else if (e.getSource() == difficultBtn) {
+			BohnanzaController bc = new BohnanzaController("pvph");
 			this.dispose();//gets rid of the previous window
 			//SurveyMenu surveyWindow = new SurveyMenu();
 		}	

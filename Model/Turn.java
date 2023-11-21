@@ -6,12 +6,10 @@ public interface Turn {
 	
 	boolean plant(Card bean);
 	
-	public String discard();
+	public boolean sell(int fieldNum);
 	
 	public String extendedTurn();
 	
 	public boolean purchaseBeanField(int coins);
-	
-	public boolean sell(int fieldNum);
 	
 }
