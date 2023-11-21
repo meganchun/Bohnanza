@@ -49,6 +49,7 @@ public class BohnanzaController implements ActionListener {
 	private static GameFrame gameFrame;
 	GUIController gui = new GUIController();
 	DeckController deck = new DeckController();
+	AIController ai;
 	
 	private Player currentPlayer;
 
@@ -93,16 +94,24 @@ public class BohnanzaController implements ActionListener {
 			playerTwo = new HumanPlayer(ModeSelectFrame.strNameTwo,q1,b2,numB2,false,0,1);
 		}
 		else if (mode.equals("easy")) {
-			playerOne = new HumanPlayer(ModeSelectFrame.strNameOne,q,b1,numB1,false,0,1);
-			playerTwo = new AIPlayer(ModeSelectFrame.strNameTwo,q1,b2,numB2,false,0,1,"easy");
+			playerOne = new HumanPlayer("Player One",q,b1,numB1,false,0,1);
+			playerTwo = new AIPlayer("AI Player",q1,b2,numB2,false,0,1,"easy");
+			
 		}
 		else {
-			playerOne = new HumanPlayer(ModeSelectFrame.strNameOne,q,b1,numB1,false,0,1);
-			playerTwo = new AIPlayer(ModeSelectFrame.strNameTwo,q1,b2,numB2,false,0,1,"hard");
+			playerOne = new HumanPlayer("Player One",q,b1,numB1,false,0,1);
+			playerTwo = new AIPlayer("AI Player",q1,b2,numB2,false,0,1,"hard");
+			
 		}
 		
 		//create a new game frame
 		gameFrame = new GameFrame();
+		
+		//initalize the AI controller
+		if (mode.equals("easy")) 
+			ai = new AIController("easy", gameFrame, gui, deck);
+		else 
+			ai = new AIController("hard", gameFrame, gui, deck);
 
 		//set the panels to the corresponding players
 		playerOne.setPanel(gameFrame.getPlayerOnePanel());
@@ -210,6 +219,12 @@ public class BohnanzaController implements ActionListener {
 		this.gui = gui;
 	}
 	
+	public Player getCurrentPlayer() {
+		return currentPlayer;
+	}
+	public void setCurrentPlayer(Player currentPlayer) {
+		this.currentPlayer = currentPlayer;
+	}
 	public void addActionListeners(Player player) {
 		
 		
@@ -537,9 +552,36 @@ public class BohnanzaController implements ActionListener {
 						}
 					}
 					
+					
 					if (currentPlayer instanceof AIPlayer) {
 						
+						for (int i = 0; i < 3; i++) {
+							gameFrame.getCommonPanel().getSlots()[0][i].removeActionListener(this);
+						}
+						
+						try {
+							ai.plantOrDiscardOffered(currentPlayer);
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						
+						currentPlayer = playerOne;
+						gui.enablePlayersHand(currentPlayer);
+						
+						// loop through the remaining cards and enable them for the next player to pick
+						for (int i = 0; i < 3; i++) {
+							// if the image of the card does not equal to a temporary image, as in it was not picked during the previous turn,
+							// enable the card
+
+							if (!(gameFrame.getCommonPanel().getSlots()[0][i].getIcon().toString().equals("Images/slotsBtn.png"))) {
+								gameFrame.getCommonPanel().getSlots()[0][i].setEnabled(true);
+							}
+						}
+						
 					}
+					
+					
 				}
 			}
 		}

@@ -15,8 +15,30 @@ public class AIPlayer extends Player implements Turn {
 	@Override
 	public boolean plant(Card bean) {
 		// TODO Auto-generated method stub
+	
+		if (this.isThirdFieldOwned()) {
+			
+			for (int i = 0; i < 3; i++) {
+				
+				if (bean == this.getBeansInField()[i] || this.getNumBeansInField()[i] == 0) {
+					return true;
+				}
+			}
+		}
+		else {
+			for (int i = 0; i < 2; i++) {
+				
+				if (bean == this.getBeansInField()[i] || this.getNumBeansInField()[i] == 0) {
+					return true;
+					
+				}
+			}
+		}
+		
 		return false;
+		
 	}
+
 
 	@Override
 	public boolean sell(int fieldNum) {

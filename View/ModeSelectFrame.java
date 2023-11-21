@@ -140,12 +140,12 @@ public class ModeSelectFrame extends JFrame implements ActionListener{
 		
 		else if (e.getSource() == easyBtn) {
 			
-			BohnanzaController bc = new BohnanzaController("pvce");
+			BohnanzaController bc = new BohnanzaController("easy");
 			this.dispose();//gets rid of the previous window
 		}	
 	
 		else if (e.getSource() == difficultBtn) {
-			BohnanzaController bc = new BohnanzaController("pvph");
+			BohnanzaController bc = new BohnanzaController("hard");
 			this.dispose();//gets rid of the previous window
 			//SurveyMenu surveyWindow = new SurveyMenu();
 		}	
