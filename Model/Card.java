@@ -53,4 +53,23 @@ public class Card {
 		this.fileName = fileName;
 	}
 	
+	public int getCoinsEarned(int numberOfBeans) {	
+		
+		for (int i = 0; i < getbeanometer().length; i++) {
+			if (i == numberOfBeans && getbeanometer()[i] != 0) {
+				return getbeanometer()[i];
+			}
+		}
+		
+		
+		for (int i = numberOfBeans-1; i >= 0; i--) {
+			if (getbeanometer()[i] != 0) {
+				return getbeanometer()[i];
+			}
+		}
+		
+		return 0;
+		
+	}
+	
 }

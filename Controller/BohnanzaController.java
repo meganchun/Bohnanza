@@ -1,39 +1,54 @@
-/*Megan Chun, Aaron Su
-
+/*Megan Chun
+ *
  * 
  * 
  * 
  */
 package Controller;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
+import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Queue;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.plaf.synth.SynthOptionPaneUI;
 
 import Model.Card;
 import Model.HumanPlayer;
 import Model.Player;
 import View.GameFrame;
+import View.ModeSelectFrame;
+import View.PlayerHandPanel;
 import View.PlayerPanel;
 
 public class BohnanzaController implements ActionListener {
-
+	
 	private static Player playerOne;
 	private static Player playerTwo;
-
+	
 	private static GameFrame gameFrame;
 	GUIController gui = new GUIController();
 	DeckController deck = new DeckController();
-
+	
 	private Player currentPlayer;
 
 	private int numOfCardsDrawed = 0;
@@ -41,14 +56,17 @@ public class BohnanzaController implements ActionListener {
 	private int numOfPlants = 0;
 	
 	private boolean firstTurn = true;
-
-	Card cardDiscard;
-
+	
 	Queue<Card> q = new LinkedList<>();
 	Queue<Card> q1 = new LinkedList<>();
 
+	
+	Card cardDiscard;
+	
 	public BohnanzaController() {
-
+		
+		playMusic("Audio/backgroundMusic.wav");
+		
 		// give player cards in their hand
 		// alternate dealing by checking the even / odd iteration of the loop
 		for (int i = 1; i <= 10; i++) {
@@ -60,80 +78,83 @@ public class BohnanzaController implements ActionListener {
 				q1.add(deck.pop());
 			}
 		}
-
-		// set up the players field
-		Map<Card, Integer> m = new HashMap<Card, Integer>();
-
-//		m.put(bean1, 2);
-//		m.put(bean3, 5);
-
-		// -------------------------------------------------
-		// create two players
-		playerOne = new HumanPlayer("Megan", q, m, false, 0, -1);
-		playerTwo = new Player("Katherine", q1, m, false, 0, -1);
-
+		
+		Card[] b1 = {deck.getNumCardMap().get(1),deck.getNumCardMap().get(2),deck.getNumCardMap().get(3)};
+		Card[] b2 = {deck.getNumCardMap().get(1),deck.getNumCardMap().get(2),deck.getNumCardMap().get(3)};
+		
+		int[] numB1 = {0,0,0};
+		int[] numB2 = {0,0,0};
+		
+		//-------------------------------------------------
+		//create two players
+		playerOne = new HumanPlayer(ModeSelectFrame.strNameOne,q,b1,numB1,false,0,1);
+		playerTwo = new HumanPlayer(ModeSelectFrame.strNameTwo,q1,b2,numB2,false,0,1);
+		
+		//create a new game frame
 		gameFrame = new GameFrame();
 
+		//set the panels to the corresponding players
 		playerOne.setPanel(gameFrame.getPlayerOnePanel());
 		playerTwo.setPanel(gameFrame.getPlayerTwoPanel());
-
+		
+		//add action listeners to all the components
 		addActionListeners();
-
+		
+		//set the current player to player one
 		currentPlayer = playerOne;
-		gui.disableActivePlayerComponents(playerOne);
-		gui.disableInactivePlayerComponents(playerTwo);
-
+		
+		//activate and disable components for the two players
+		gui.enablePlayersHand(playerOne);
+		gui.disableInactiveComponents(playerTwo);
+		
+		currentPlayer.getPanel().getNameLabel().setOpaque(true);
+		currentPlayer.getPanel().getNameLabel().setBackground(new Color(229,60,60));
+		
 		currentPlayer.setCurrentStage(1);
-
+		
+		
 	}
-
 	public void setUpPlayer(Player player) {
-
+		
 	}
-
 	public static Player getPlayerOne() {
 		return playerOne;
 	}
-
-	public void setPlayerOne(Player playerOne) {
+	public void setPlayerOne(HumanPlayer playerOne) {
 		this.playerOne = playerOne;
 	}
-
 	public static Player getPlayerTwo() {
 		return playerTwo;
 	}
-
-	public void setPlayerTwo(Player playerTwo) {
+	public void setPlayerTwo(HumanPlayer playerTwo) {
 		this.playerTwo = playerTwo;
 	}
 
 	public static GameFrame getGameFrame() {
 		return gameFrame;
 	}
-
 	public void setGameFrame(GameFrame gameFrame) {
 		this.gameFrame = gameFrame;
 	}
-
 	public GUIController getGui() {
 		return gui;
 	}
-
 	public void setGui(GUIController gui) {
 		this.gui = gui;
 	}
-
+	
 	public void addActionListeners() {
-
-		// add action listeners for both panels
-
-		PlayerPanel[] panels = { gameFrame.getPlayerOnePanel(), gameFrame.getPlayerTwoPanel() };
-
+		
+		
+		//add action listeners for both panels 
+		
+		PlayerPanel[] panels = {gameFrame.getPlayerOnePanel(),gameFrame.getPlayerTwoPanel()};
+		
 		for (PlayerPanel p : panels) {
-
+			
 			p.getHand().getPlantBtn().addActionListener(this);
 			p.getHand().getDiscardBtn().addActionListener(this);
-
+			
 			if (!playerOne.getHand().isEmpty()) {
 				for (JRadioButton b : playerOne.getPanel().getHand().getCardsInHand()) {
 					b.addActionListener(this);
@@ -144,18 +165,19 @@ public class BohnanzaController implements ActionListener {
 					b.addActionListener(this);
 				}
 			}
-
+			
 			for (int i = 0; i < 3; i++) {
 				p.getField().getActionBtns()[i].addActionListener(this);
 			}
 		}
-
-		// action listeners for the common panel
+		
+		//action listeners for the common panel
 		gameFrame.getCommonPanel().getDeck().addActionListener(this);
 		gameFrame.getCommonPanel().getDiscardButton().addActionListener(this);
-		gameFrame.getCommonPanel().getDiscardButton().addActionListener(this);
 		gameFrame.getCommonPanel().getEndExtendBtn().addActionListener(this);
-
+		gameFrame.getCommonPanel().getDiscardDeck().addActionListener(this);
+		
+		//Aaron ----
 		// Create action listeners for each of the 3 cards drawn from the deck
 		for (int i = 0; i < 3; i++) {
 			int index = i;
@@ -164,59 +186,62 @@ public class BohnanzaController implements ActionListener {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					// add the cards to hand and disable them so they can't be added twice
-					System.out.println("Option " + (index + 1) + " Added To Hand");
-					currentPlayer.getHand().add(checkCardTypeSelected(gameFrame.getCommonPanel().getSlots()[0][index].getIcon().toString()));
-//					currentPlayer.getPanel().getHand().setCardsInHand((GUIController.updateHand(currentPlayer)));
-//					GUIController.updateHand(currentPlayer);
 					
-					currentPlayer.getPanel().getHand().addCards(currentPlayer);
-					gameFrame.getCommonPanel().getSlots()[0][index].setEnabled(false);
+					Card cardSelected = checkCardTypeSelected(gameFrame.getCommonPanel().getSlots()[0][index].getIcon().toString());
+				
+					HumanPlayer player = (HumanPlayer) currentPlayer;
+					
+					//if the plant is a valid move on the field
+					if (player.plant(cardSelected)) {
+						//update the field
+						gui.updateField(currentPlayer, cardSelected);
+						
+						
+						gameFrame.getCommonPanel().getSlots()[0][index].setEnabled(false);
+						gameFrame.getCommonPanel().getSlots()[0][index].setIcon(new ImageIcon("Images/slotsBtn.png"));
+						
+						JOptionPane.showMessageDialog(gameFrame, currentPlayer.getName() + " Planted","Bean Planted!",
+								    JOptionPane.INFORMATION_MESSAGE, currentPlayer.getPanel().getHand().getPlantIcon());
+						
+
+					}
+					else {
+						JOptionPane.showMessageDialog(gameFrame, 
+								"You can not plant this bean! Ensure your field has room.",
+								"Unable To Process Request",JOptionPane.ERROR_MESSAGE);
+					}
+					
+					
 				}
 			});
 		}
+		//-----------
 	}
-
+	
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-
-		Player playerAction;
-
-		// check which panel the button was clicked in
-		if (((Component) e.getSource()).getParent().getParent().getParent().getY() == 0) {
-			playerAction = playerOne;
-		} 
+	
+		playMusic("Audio/buttonSound.wav");
 		
-		else {
-			playerAction = playerTwo;
-		}
-
-		// STEP 1: PLANT OR DISCARD LAST PLAYERS REMAINING DRAWED CARDS
-		// ------------------------------------------------------------
+		//STEP 1: PLANT OR DISCARD LAST PLAYERS REMAINING DRAWED CARDS
+		//------------------------------------------------------------
 		if (currentPlayer.getCurrentStage() == 1) {
 			
 			// if it is the first turn of the entire game, skip this stage
-			if (firstTurn == true) {
+			if (firstTurn) {
+			
 				firstTurn = false;
 				currentPlayer.setCurrentStage(2);
 				
-				// unlock plant button for step 2
-				currentPlayer.getPanel().getHand().getPlantBtn().setEnabled(true);
-				currentPlayer.getPanel().getHand().getDiscardBtn().setEnabled(true);
-				for (JButton b : currentPlayer.getPanel().getField().getActionBtns()) {
-					b.setEnabled(true);
-				}
-				
-				gameFrame.getCommonPanel().getDiscardButton().setEnabled(false);
-				gameFrame.getCommonPanel().getDeck().setEnabled(false);
-				gui.enablePlayersHand(currentPlayer);
 			}
-			
 			// otherwise, perform the following
 			else {
-				
+
 				// if the player decides to discard the remaining cards in the common panel
 				if (e.getSource() == gameFrame.getCommonPanel().getDiscardButton()) {
+					
 					// change all the card icons to a temp card, and then disable them...
 					// make sure to check if it is not a temp card because we do not want to fill our discard pile with useless cards
 					for (int i = 0; i < 3; i++) {
@@ -225,174 +250,255 @@ public class BohnanzaController implements ActionListener {
 							deck.addToDiscard(cardDiscard);
 							gameFrame.getCommonPanel().getDiscardDeck().setIcon(new ImageIcon("Images/Beans/" + cardDiscard.getBeanType() + ".png"));
 						}
-						
+	
 						gameFrame.getCommonPanel().getSlots()[0][i].setIcon(new ImageIcon("Images/slotsBtn.png"));
 						gameFrame.getCommonPanel().getSlots()[0][i].setEnabled(false);
 					}
-					
-					currentPlayer.setCurrentStage(2);
 	
+					currentPlayer.setCurrentStage(2);
+					
 					// unlock plant button for step 2
 					currentPlayer.getPanel().getHand().getPlantBtn().setEnabled(true);
 					currentPlayer.getPanel().getHand().getDiscardBtn().setEnabled(true);
 					for (JButton b : currentPlayer.getPanel().getField().getActionBtns()) {
 						b.setEnabled(true);
 					}
-					
+	
 					gameFrame.getCommonPanel().getDiscardButton().setEnabled(false);
 					gui.enablePlayersHand(currentPlayer);
 				}
 			}
 		}
+		
 
-		// STEP 2: PLANT OR DISCARD LAST PLAYERS REMAINING DRAWED CARDS
-		// ------------------------------------------------------------
+		//STEP 2: PLANT OR DISCARD OWN CARDS
+		//------------------------------------------------------------
 		if (currentPlayer.getCurrentStage() == 2) {
-
-			// if the player presses the plant button
+			
+			//if the player presses the plant button
 			if (e.getSource() == currentPlayer.getPanel().getHand().getPlantBtn()) {
-
-				// if they have planted 2 or less times
+				
+				//if they have planted 2 or less times
 				if (numOfPlants < 2) {
+					
+					if (currentPlayer.getPanel().getHand().getCardsInHand().get(0).isSelected()){
+				
+						HumanPlayer player = (HumanPlayer) currentPlayer;
+						
+						//if the plant is a valid move on the field
+						if (player.plant(currentPlayer.getHand().peek())) {
+							
+							//update the hand
+							numOfPlants++;
+							
+							//update the field
+							gui.updateField(currentPlayer, currentPlayer.getHand().peek());
+							
+							
+							currentPlayer.getHand().remove();
+						
+							gui.updateHand(currentPlayer);
+							
+							JOptionPane.showMessageDialog(gameFrame, currentPlayer.getName() + " Planted","Bean Planted!",
+									    JOptionPane.INFORMATION_MESSAGE, currentPlayer.getPanel().getHand().getPlantIcon());
 
-					// if the player selects the first card in their hand
-					if (currentPlayer.getPanel().getHand().getCardsInHand()[0].isSelected()) {
-						System.out.println(currentPlayer.getPanel().getHand().getCardsInHand()[0].getIcon());
-						JOptionPane.showMessageDialog(gameFrame, currentPlayer.getName() + " Planted", "Bean Planted!",
-								JOptionPane.INFORMATION_MESSAGE, currentPlayer.getPanel().getHand().getPlantIcon());
-
-						numOfPlants++;
+						}
+						else {
+							JOptionPane.showMessageDialog(gameFrame, 
+									"You can not plant this bean! Ensure your field has room.",
+									"Unable To Process Request",JOptionPane.ERROR_MESSAGE);
+						}
+						
 					}
-					// else show an error message
+					//else show an error message
 					else {
-						JOptionPane.showMessageDialog(gameFrame,
+						JOptionPane.showMessageDialog(gameFrame, 
 								"You can not plant this bean! Choose the bean at the front of your hand",
-								"Unable To Process Request", JOptionPane.ERROR_MESSAGE);
+								"Unable To Process Request",JOptionPane.ERROR_MESSAGE);
 					}
-
-				} else {
-					JOptionPane.showMessageDialog(gameFrame, "You can only plant a maximum of two beans!",
-							"Unable To Process Request", JOptionPane.ERROR_MESSAGE);
+					
 				}
-
-			}
-
-			// if the player clicks the discard button in the player frame
-			if (e.getSource() == playerAction.getPanel().getHand().getDiscardBtn()) {
-
-				// check through each button in the players hand
-				for (JRadioButton b : playerAction.getPanel().getHand().getCardsInHand()) {
-					// if a card is selected call the checkCardTypeSelected method
+				else {
+					JOptionPane.showMessageDialog(gameFrame, 
+							"You can only plant a maximum of two beans!",
+							"Unable To Process Request",JOptionPane.ERROR_MESSAGE);
+				}
+					
+		}
+	
+			//if the player clicks the DISCARD button
+			if (e.getSource() == currentPlayer.getPanel().getHand().getDiscardBtn()) {
+				
+				Queue<Card> tempHand = new LinkedList();
+				
+				int index = 0;
+				int indexOfDiscard = 0;
+			
+				//check through each button in the players hand
+				for (JRadioButton b : currentPlayer.getPanel().getHand().getCardsInHand()) {
+					//if a card is selected call the checkCardTypeSelected method
 					if (b.isSelected()) {
+						indexOfDiscard = index;
 						cardDiscard = checkCardTypeSelected(b.getIcon().toString());
 						deck.addToDiscard(cardDiscard);
-						gameFrame.getCommonPanel().getDiscardDeck().setIcon(new ImageIcon("Images/Beans/" + cardDiscard.getBeanType() + ".png"));
+						
 					}
-
+					++index;
 				}
 				
+	
+				gameFrame.getCommonPanel().getDiscardDeck().setIcon(new ImageIcon("Images/Beans/"+cardDiscard.getFileName()));
+			
+				index = 0;
+				
+				for (Card c : currentPlayer.getHand()) {
+					if (index != indexOfDiscard) {
+						tempHand.add(c);
+					}
+					++index;
+				}
+				
+				currentPlayer.setHand(tempHand);
+				
+				//update the hand with the removed card
+				gui.updateHand(currentPlayer);
+			
 				currentPlayer.setCurrentStage(3);
-
-//				JOptionPane.showMessageDialog(gameFrame,
-//						currentPlayer.getName() + " Discarded " + cardDiscard.getBeanType() + " Bean");
-
-				// disable components for step 2
+				
+				JOptionPane.showMessageDialog(gameFrame,
+					   currentPlayer.getName() + " Discarded " + cardDiscard.getBeanType() +" Bean");
+				
+				//disable components for step 2
 				currentPlayer.getPanel().getHand().getPlantBtn().setEnabled(false);
 				currentPlayer.getPanel().getHand().getDiscardBtn().setEnabled(false);
 				gui.enablePlayersHand(currentPlayer);
-				numOfPlants = 0; // reset number of plants counter
+				
 				currentPlayer.setCurrentStage(3);
 			}
-
-		}
-
-		// STEP 3: EXTENDED TURN
-		// ------------------------------------------------------------
-		if (currentPlayer.getCurrentStage() == 3) {
-			gameFrame.getCommonPanel().getDeck().setEnabled(true);
 			
-			if (e.getSource() == gameFrame.getCommonPanel().getDeck() && currentPlayer.getCurrentStage() == 3) {
-				gameFrame.getCommonPanel().getDeck().setEnabled(false);
+			
+		}
+		
+		//STEP 3: EXTENDED TURN
+		//------------------------------------------------------------
+		if (currentPlayer.getCurrentStage() == 3) {
+			
+			gameFrame.getCommonPanel().getDeck().setEnabled(true);
+			gameFrame.getCommonPanel().getDiscardButton().setEnabled(false);
 
-				// pop a card from the deck and visually display on one of the 3 slots for the player to choose from
-				for (int i = 0; i < 3; i++) {
-					gameFrame.getCommonPanel().getSlots()[0][i].setIcon(new ImageIcon("Images/Beans/" + deck.pop().getFileName()));
-					
-					// check if the top card on the discard pile is the same as one of the cards in the slots...
-					// will result in disabling the options, and waiting until the deck is called
-					if (gameFrame.getCommonPanel().getDiscardDeck().getIcon().toString().equals(gameFrame.getCommonPanel().getSlots()[0][i].getIcon().toString())) {
-						gameFrame.getCommonPanel().getDiscardDeck().setEnabled(true);
-						
-						setEnabled(false);
-						break;
-					}
-					
-					else {
-						gameFrame.getCommonPanel().getSlots()[0][i].setEnabled(true);
+			if (e.getSource() == gameFrame.getCommonPanel().getDeck()) {
+				
+				if (!deck.endOfGame()) {
+					gameFrame.getCommonPanel().getDeck().setEnabled(false);
+	
+					// pop a card from the deck and visually display on one of the 3 slots for the player to choose from
+					for (int i = 0; i < 3; i++) {
+						gameFrame.getCommonPanel().getSlots()[0][i].setIcon(new ImageIcon("Images/Beans/" + deck.pop().getFileName()));
+	
+						// check if the top card on the discard pile is the same as one of the cards in the slots...
+						// will result in disabling the options, and waiting until the deck is called
+						if (gameFrame.getCommonPanel().getDiscardDeck().getIcon().toString().equals(gameFrame.getCommonPanel().getSlots()[0][i].getIcon().toString())) {
+							
+							//enable the discard deck
+							gameFrame.getCommonPanel().getDiscardDeck().setEnabled(true);
+						}
+	
+						else {
+							gameFrame.getCommonPanel().getSlots()[0][i].setEnabled(true);
+							gameFrame.getCommonPanel().getEndExtendBtn().setEnabled(true);
+						}
 					}
 				}
-				
-				gameFrame.getCommonPanel().getEndExtendBtn().setEnabled(true);
+				//if there are no more cards to pick up
+				else {
+					gameFrame.setVisible(false);
+				}
 			}
 			
+			if (e.getSource() == gameFrame.getCommonPanel().getDiscardDeck()) {
+				
+				if (!deck.getDiscardList().isEmpty())
+					gameFrame.getCommonPanel().getDiscardDeck().setIcon(new ImageIcon("Images/Beans/" + deck.popFromGarbage().getFileName()));
+				else
+					gameFrame.getCommonPanel().getDiscardDeck().setIcon(new ImageIcon("Images/slotsBtn.png"));
+				
+				
+			}
+		
 			// signify the end of their extended turn
 			if (e.getSource() == gameFrame.getCommonPanel().getEndExtendBtn()) {
 				gameFrame.getCommonPanel().getEndExtendBtn().setEnabled(false);
 				
+
 				// loop through all the slots and revert the cards chosen to the original image...
 				// for cards that were not chosen, disable them for the next player to use
 				for (int i = 0; i < 3; i++) {
 					if (gameFrame.getCommonPanel().getSlots()[0][i].isEnabled() == false) {
 						gameFrame.getCommonPanel().getSlots()[0][i].setIcon(new ImageIcon("Images/slotsBtn.png"));
 					}
-					
+
 					else {
 						gameFrame.getCommonPanel().getSlots()[0][i].setEnabled(false);
 					}
 				}
-				
+
 				JOptionPane.showMessageDialog(gameFrame,
-						currentPlayer.getName() + currentPlayer + " finished their extended turn, draw 2 cards!");
+						   currentPlayer.getName() + " finished their extended turn, draw 2 cards!");
 				currentPlayer.setCurrentStage(4);
 			}
 		}
-
-		// STEP 4: PICKING UP TWO CARDS
-		// ------------------------------------------------------------
+		
+		//STEP 4: PICKING UP TWO CARDS
+		//------------------------------------------------------------
 		if (currentPlayer.getCurrentStage() == 4) {
-
+			
 			if (e.getSource() == gameFrame.getCommonPanel().getDeck()) {
-
+				
 				// pop the card from the deck stack, and add it to the players' hand
 				Card newCard = deck.pop();
 				currentPlayer.getHand().add(newCard);
+				
+				//update the gui
+				gui.updateHand(currentPlayer);
+				
 				numOfCardsDrawed++;
-
-				// if the player picks up 2 cards, it signaled the end of their turn
+				
+				//if the player picks up 2 cards, it signaled the end of their turn
 				if (numOfCardsDrawed == 2) {
-
-					// return the current player to the first stage
-					currentPlayer.setCurrentStage(1);
-
+					
+					
 					// reset all the common panels 
 					gameFrame.getCommonPanel().getDeck().setEnabled(false);
 					gameFrame.getCommonPanel().getEndExtendBtn().setEnabled(false);
 					gameFrame.getCommonPanel().getDiscardButton().setEnabled(true);
 					
+					//return the current player to the first stage
+					currentPlayer.setCurrentStage(1);
 					
-					gui.disableActivePlayerComponents(currentPlayer);
-
-					// determine who's turn it is now
-					if (currentPlayer == playerOne) {
+					gui.disableInactiveComponents(currentPlayer);
+					BohnanzaController.getGameFrame().getCommonPanel().getDiscardButton().setEnabled(true);
+					
+					
+					//determine who's turn it is now
+					if (currentPlayer == playerOne)	 {
+						playerTwo.getPanel().getNameLabel().setOpaque(true);
+						playerTwo.getPanel().getNameLabel().setBackground(new Color(229,60,60));
+						playerOne.getPanel().getNameLabel().setOpaque(false);
 						currentPlayer = playerTwo;
-					} else {
+					}
+					else {
+						playerOne.getPanel().getNameLabel().setOpaque(true);
+						playerOne.getPanel().getNameLabel().setBackground(new Color(229,60,60));
+						playerTwo.getPanel().getNameLabel().setOpaque(false);
 						currentPlayer = playerOne;
 					}
-
-					currentPlayer.setCurrentStage(1);
+				
 					gui.enablePlayersHand(currentPlayer);
-
+					
+					
 					numOfCardsDrawed = 0; // reset number of cards drawn
+					numOfPlants = 0; //reset number of plants counter
+	
 
 					JOptionPane.showMessageDialog(gameFrame, currentPlayer.getName()
 							+ "'s Turn. You can choose to plant or discard the cards in the middle to procced.");
@@ -401,74 +507,135 @@ public class BohnanzaController implements ActionListener {
 					for (int i = 0; i < 3; i++) {
 						// if the image of the card does not equal to a temporary image, as in it was not picked during the previous turn,
 						// enable the card
-						
+
 						if (!(gameFrame.getCommonPanel().getSlots()[0][i].getIcon().toString().equals("Images/slotsBtn.png"))) {
 							gameFrame.getCommonPanel().getSlots()[0][i].setEnabled(true);
 						}
-						
 					}
 				}
 			}
 		}
-
-		// EVENTS FOR SELLING
-		if (e.getSource() == playerAction.getPanel().getField().getActionBtns()[0]
-				|| e.getSource() == playerAction.getPanel().getField().getActionBtns()[1]) {
-			JOptionPane.showMessageDialog(gameFrame, playerAction.getName() + " Sold Their Beans");
+		
+		
+		//EVENTS FOR SELLING--------------------------------------------------------------------
+		if (e.getSource() == currentPlayer.getPanel().getField().getActionBtns()[0] ||
+				e.getSource() == currentPlayer.getPanel().getField().getActionBtns()[1]) {
+			
+			HumanPlayer player = (HumanPlayer) currentPlayer;
+			
+			if (e.getSource() == currentPlayer.getPanel().getField().getActionBtns()[0] && 	
+					(player.sell(0))) {
+				gui.updateSell(currentPlayer, 0);
+				JOptionPane.showMessageDialog(gameFrame, currentPlayer.getName() + " Sold Their Beans");
+			}
+			else if (e.getSource() == currentPlayer.getPanel().getField().getActionBtns()[1] && 	
+					(player.sell(1))) {
+				gui.updateSell(currentPlayer, 1);
+				JOptionPane.showMessageDialog(gameFrame, currentPlayer.getName() + " Sold Their Beans");
+			}
+			else {
+				JOptionPane.showMessageDialog(gameFrame, 
+						"Nothing to sell! Sell a field with beans planted.",
+						"Unable To Process Request",JOptionPane.ERROR_MESSAGE);
+			}
 		}
-
-		// if the player clicks the third field
-		if (e.getSource() == playerAction.getPanel().getField().getActionBtns()[2]) {
-
-			// if the third field is not owned
-			if (playerAction.isThirdFieldOwned() == false) {
-				// if the player can't afford the field
-				if (playerAction.getScore() < -1) {
-					JOptionPane.showMessageDialog(gameFrame, "You Can Not Afford This Field",
-							"Unable To Process Request", JOptionPane.ERROR_MESSAGE);
-
-				} else {
-					gui.unlockField(playerAction);
-					JOptionPane.showMessageDialog(gameFrame, playerAction.getName() + " Bought A Field");
+		
+		//if the player clicks the third field
+		if (e.getSource() == currentPlayer.getPanel().getField().getActionBtns()[2]) {
+		
+			//if the third field is not owned
+			if (currentPlayer.isThirdFieldOwned() == false) {
+				//if the player can't afford the field
+				if (currentPlayer.getScore() <= 0) {
+					JOptionPane.showMessageDialog(gameFrame, 
+							"You Can Not Afford This Field","Unable To Process Request",JOptionPane.ERROR_MESSAGE);
+				}
+				else {
+					gui.unlockField(currentPlayer);
+					JOptionPane.showMessageDialog(gameFrame, currentPlayer.getName() + " Bought A Field");
 				}
 			}
-			
-			// if the third field is owned
+			//if the third field is owned
 			else {
-				JOptionPane.showMessageDialog(gameFrame, playerAction.getName() + " Sold Their Beans");
+				
+				HumanPlayer player = (HumanPlayer) currentPlayer;
+				//if the field has beans to be sold
+				if (player.sell(2)) {
+					gui.updateSell(currentPlayer, 1);
+					JOptionPane.showMessageDialog(gameFrame, currentPlayer.getName() + " Sold Their Beans");
+				}
+				//if there are no beans to sell
+				else {
+					JOptionPane.showMessageDialog(gameFrame, 
+							"Nothing to sell! Sell a field with beans planted.",
+							"Unable To Process Request",JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		}
-
-		// EVENTS FOR STACKING CARDS FROM THE DISCARD PILE
 		
-		if (e.getSource() == gameFrame.getCommonPanel().getDiscardDeck()) {
-			System.out.println("Card in discard matches drawn card... stack ontop");
-			
-			gameFrame.getCommonPanel().getDiscardDeck().setEnabled(false);
-			
-			setEnabled(true);
-		}
 	}
-
+	
 	public Card checkCardTypeSelected(String fileName) {
-
-		for (Map.Entry<Integer, Card> entry : deck.getNumCardMap().entrySet()) {
+		
+		for (Map.Entry<Integer,Card> entry : deck.getNumCardMap().entrySet())   {
 			
-
-			String file = "Images/Beans/" + entry.getValue().getFileName();
-
+			String file = "Images/Beans/"+entry.getValue().getFileName();
+			
 			if (file.equals(fileName)) {
 				return entry.getValue();
 			}
 		}
-		
 		return null;
+		
 	}
 	
-	public void setEnabled(boolean condition) {
-		for (int i = 0; i < 3; i++) {
-			gameFrame.getCommonPanel().getSlots()[0][i].setEnabled(condition);;
+	public static void playMusic(String filepath) {
+		
+		//https://www.youtube.com/watch?v=wJO_cq5XeSA
+		try {
+			//create a file
+			File musicPath = new File(filepath);
+			
+			//if the file exists
+			if (musicPath.exists()) {
+				
+				//create an audio input stream
+				AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
+				//create a clip of the audio
+				Clip clip = AudioSystem.getClip();
+				//open the audio input stream
+				clip.open(audioInput);
+				
+
+				//if the file is the background music
+				if (filepath.equals("Audio/backgroundMusic.wav")) {
+					//loop the audio clip
+					clip.loop(Clip.LOOP_CONTINUOUSLY);
+				}
+				
+				if (filepath.equals("Audio/buttonSound.wav")) {
+					FloatControl gainControl = 
+							(FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+					//lower the sound by 10 decibel
+					gainControl.setValue(-20.0f);
+				}
+				
+				//start to the audio
+				clip.start();
+			}
+			//if the file is not found, print an error message
+			else {
+				System.out.println("can't find file");
+			}
+		}
+		
+		catch (Exception e) 
+		{
+			System.out.println("error");
 		}
 	}
+	
 
+	
+	
 }

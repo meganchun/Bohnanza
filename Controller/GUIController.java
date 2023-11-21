@@ -1,16 +1,25 @@
 //Megan Chun
 package Controller;
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.Queue;
 
 import Model.Card;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 
 import Model.Player;
+import View.GameFrame;
 import View.PlayerFieldPanel;
 import View.PlayerHandPanel;
 import View.PlayerPanel;
@@ -26,88 +35,108 @@ public class GUIController {
 		player.getPanel().getScoreNum().setText(Integer.toString(player.getScore()));
 	}
 	
-	public static JRadioButton[] updateHand(Player player) {
-		
-		String[] typeOfBeans = {"Garden","Red","Black-eyed","Soy","Green","Stink","Chili","Blue"};
-		
-		Queue<Card> tempHand = player.getHand();
-		
-	
-		//store the number of each type of bean is in the hand 
-		int[] typeOfBeansInHand = new int[8];
-		
-		for (Card name : tempHand) {
-			
-			//CHANGE TO REFLECT A CARD 
-			if (name.getBeanType().equals("Garden")) {
-				typeOfBeansInHand[0]++;
-			}
-			else if (name.getBeanType().equals("Red")) {
-				typeOfBeansInHand[1]++;
-			}
-			else if (name.getBeanType().equals("Black-eyed")) {
-				typeOfBeansInHand[2]++;
-			}
-			else if (name.getBeanType().equals("Soy")) {
-				typeOfBeansInHand[3]++;
-			}
-			else if (name.getBeanType().equals("Green")) {
-				typeOfBeansInHand[4]++;
-			}
-			else if (name.getBeanType().equals("Stink")) {
-				typeOfBeansInHand[5]++;
-			}
-			else if (name.getBeanType().equals("Chili")) {
-				typeOfBeansInHand[6]++;
-			}
-			else if (name.getBeanType().equals("Blue")) {
-				typeOfBeansInHand[7]++;
-			}
-		}
-		
-		//get number of types of bean
-		int numTypesOfBeans = 0;
-		
-		for (int i = 0; i < 8; i++) {
-			if (typeOfBeansInHand[i] > 0) {
-				numTypesOfBeans++;
-			}
-		}
-		
-		JRadioButton[] btns = new JRadioButton[numTypesOfBeans];
-		
-		int index = 0;
+	public void updateHand(Player player) {
 
-		for (int i = 0; i < typeOfBeansInHand.length; i++) {
-			
-			if (typeOfBeansInHand[i] > 0) {
-				String name = typeOfBeans[i] + " x" + typeOfBeansInHand[i];  //typeOfBeans[i].getName()
-				
-				ImageIcon cardImage = new ImageIcon("Images/Beans/"+typeOfBeans[i]+".png"); //
-				btns[index++]= new JRadioButton(name, cardImage);
-			}
-		}
 		
-		return btns;
+		player.getPanel().getHand().getHandPanel().removeAll();
+		
+		JPanel newHandPanel = new JPanel();
+		
+		newHandPanel = new JPanel();
+		newHandPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+		newHandPanel.setBackground(new Color(116,65,35));
+		newHandPanel.setPreferredSize(new Dimension(1500, 160));
+		
+		int x = 0; 
+		ArrayList<JRadioButton> cardsInHand;
+		
+		if (!player.getHand().isEmpty()) {
+			
+			//add the buttons to the panel and change its colour/font
+			
+			Queue<Card> tempHand = player.getHand();
+			
+			cardsInHand = new ArrayList<JRadioButton>();
+
+			int index = 0;
+			
+			for (Card c : tempHand ) {
+				String name = c.getBeanType();
+				ImageIcon cardImage = new ImageIcon("Images/Beans/"+name+".png"); //
+				cardsInHand.add(new JRadioButton(name, cardImage));
+			
+			}
+			
+			for (JRadioButton b : cardsInHand) {
+				b.setForeground(Color.WHITE);
+				b.setFont(new Font("Helvetica", Font.BOLD, 12));
+				b.setBounds(x, 50, 111, 154);
+				newHandPanel.add(b);
+				x+= 125;
+			}
+			
+			player.getPanel().getHand().setCardsInHand(cardsInHand);
+			
+			player.getPanel().getHand().setHandPanel(newHandPanel);
+			
+			player.getPanel().getHand().getHandScrollPane().setViewportView(newHandPanel);
+			
+		}
 		
 	}
 	
-	public void updateField(Player player) {
+	public void updateField(Player player, Card bean) {
 		
-	
+		boolean beanTypePlanted = false;
+		int numFieldAvailable;
+		
+		if (player.isThirdFieldOwned()) 
+			numFieldAvailable = 3;
+		else 
+			numFieldAvailable = 2;
+			
+
+		for (int i = 0; i < numFieldAvailable; i++) {
+			
+			//if the bean already exists in the field
+			if (player.getBeansInField()[i] == bean && player.getNumBeansInField()[i] != 0) {
+				player.getPanel().getField().getCardCounter()[i].setText(
+						Integer.toString(player.getNumBeansInField()[i]+1));
+				player.getNumBeansInField()[i] += 1;
+				beanTypePlanted = true;
+				break;
+			}
+		}
+		
+		if (!beanTypePlanted) {
+			for (int i = 0; i < numFieldAvailable; i++) {
+				
+				//if there is an empty field
+				if (player.getNumBeansInField()[i] == 0) {
+
+					player.getPanel().getField().getCardCounter()[i].setText(
+							Integer.toString(player.getNumBeansInField()[i]+1));
+					player.getPanel().getField().getCardImages()[i].setIcon(new ImageIcon(
+							"Images/Beans/"+bean.getFileName()));
+					player.getNumBeansInField()[i] += 1;
+					player.getBeansInField()[i] = bean;
+					break;
+				}
+			}
+		}
 	}
 	
 	public void discardCardStep(Player player) {
 		
 	
 		if (!player.getHand().isEmpty()) {
-			for (int i = 0; i < player.getPanel().getHand().getCardsInHand().length; i++) {
+			for (int i = 0; i < player.getPanel().getHand().getCardsInHand().size(); i++) {
 				if (i == 0) {
-					player.getPanel().getHand().getCardsInHand()[i].addActionListener(null);
-					player.getPanel().getHand().getCardsInHand()[i].setEnabled(true);
+					player.getPanel().getHand().getCardsInHand().get(i).addActionListener(null);
+					player.getPanel().getHand().getCardsInHand().get(i).setEnabled(true);
 				}
 				else {
-					player.getPanel().getHand().getCardsInHand()[i].setEnabled(false);
+					player.getPanel().getHand().getCardsInHand().get(i).setEnabled(false);
 				}
 			}
 		}
@@ -121,7 +150,7 @@ public class GUIController {
 	
 	}
 
-	public void disableInactivePlayerComponents(Player player) {
+	public void disableInactiveComponents(Player player) {
 		
 		//disable ALL components for the inactive player
 		//disable plant and discard button
@@ -137,24 +166,30 @@ public class GUIController {
 			b.setEnabled(false);
 		}
 		
-	}
-	
-	public void disableActivePlayerComponents(Player player) {
-		
-		player.getPanel().getHand().getDiscardBtn().setEnabled(false);
-		player.getPanel().getHand().getPlantBtn().setEnabled(false);
-		
-		//disable cards in hand
-		for (JRadioButton b : player.getPanel().getHand().getCardsInHand()) {
-			b.setEnabled(false);
-		}
-		
-		for (JButton b : player.getPanel().getField().getActionBtns()) {
-			b.setEnabled(false);
-		}
-		
+		BohnanzaController.getGameFrame().getCommonPanel().getDiscardButton().setEnabled(false);
+		BohnanzaController.getGameFrame().getCommonPanel().getDeck().setEnabled(false);
 	}
 
+	
+	public void updateSell(Player player, int fieldNumber) {
+		
+		//update player's score 
+		player.setScore(player.getBeansInField()[fieldNumber].getCoinsEarned(player.getNumBeansInField()[fieldNumber]));
+		
+		//update gui score
+		player.getPanel().getScoreNum().setText(Integer.toString(player.getScore()));
+	
+		//update the field
+		player.getPanel().getField().getCardImages()[fieldNumber].setIcon(new ImageIcon("Images/slotsBtn.png"));
+		player.getPanel().getField().getCardCounter()[fieldNumber].setText("0");
+		
+		//update the user's backend field
+		player.getNumBeansInField()[fieldNumber] = 0;
+		
+		
+	}
+	
+ 
 	//this method will open up all the cards in the hand so the player can discard any card
 	public void enablePlayersHand(Player player) {
 

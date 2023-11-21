@@ -8,6 +8,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Scrollbar;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 import java.util.Queue;
 
 import javax.swing.BorderFactory;
@@ -40,24 +41,21 @@ public class PlayerHandPanel extends JPanel {
 	private Icon plantIcon = new ImageIcon("Images/plantCardBtn.png");
 	private JButton plantBtn = new JButton(plantIcon);
 	
-	private JRadioButton[] cardsInHand;
+	private ArrayList<JRadioButton> cardsInHand;
 	private ButtonGroup cardsButtons;
 	
 	public PlayerHandPanel(Player player) {
 		
 		setLayout(new FlowLayout(FlowLayout.LEFT));
 		
-		handPanel = new JPanel();
-		handPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-		handPanel.setBackground(new Color(116,65,35));
-		handPanel.setPreferredSize(new Dimension(1500, 160));
-		
 		addCards(player);
 		
-		handScrollPane = new JScrollPane(handPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		
+		handScrollPane = new JScrollPane(handPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		handScrollPane.setOpaque(false);
 		handScrollPane.setPreferredSize(new Dimension(250, 180));
 		add(handScrollPane);
+
 		
 		//add the panel to the two buttons
 		btnPanel = new JPanel();
@@ -73,16 +71,15 @@ public class PlayerHandPanel extends JPanel {
 		plantBtn.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); //remove border from button
 		btnPanel.add(plantBtn);
 		
-		
 	
 	}
 	
 	//GETTERS AND SETTERS
-	public JRadioButton[] getCardsInHand() {
+	public ArrayList<JRadioButton> getCardsInHand() {
 		return cardsInHand;
 	}
 
-	public void setCardsInHand(JRadioButton[] cardsInHand) {
+	public void setCardsInHand(ArrayList<JRadioButton> cardsInHand) {
 		this.cardsInHand = cardsInHand;
 	}
 
@@ -125,8 +122,27 @@ public class PlayerHandPanel extends JPanel {
 	public void setPlantIcon(Icon plantIcon) {
 		this.plantIcon = plantIcon;
 	}
+	public JPanel getHandPanel() {
+		return handPanel;
+	}
+
+	public void setHandPanel(JPanel handPanel) {
+		this.handPanel = handPanel;
+		
+	}
+	public JScrollPane getHandScrollPane() {
+		return handScrollPane;
+	}
+
+	public void setHandScrollPane(JScrollPane handScrollPane) {
+		this.handScrollPane = handScrollPane;
+	}
+
 	
 	//UTLITLY METHODS	
+
+
+	
 
 
 	public void addItemListeners(JRadioButton[] buttons) {
@@ -147,17 +163,34 @@ public class PlayerHandPanel extends JPanel {
 	
 	public void addCards(Player player) {
 
+		handPanel = new JPanel();
+		handPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+		handPanel.setBackground(new Color(116,65,35));
+		handPanel.setPreferredSize(new Dimension(1500, 160));
+		
 		int x = 0; 
 		
-		//if the game has just started, there are no cards to add
 		if (!player.getHand().isEmpty()) {
+			
 			//add the buttons to the panel and change its colour/font
 			
-			setCardsInHand(GUIController.updateHand(player));
+			Queue<Card> tempHand = player.getHand();
 			
-			for (JRadioButton b : getCardsInHand()) {
-				
+			cardsInHand = new ArrayList<JRadioButton>();
+
+			int index = 0;
+			
+			for (Card c : tempHand ) {
+				String name = c.getBeanType();
+				ImageIcon cardImage = new ImageIcon("Images/Beans/"+name+".png"); 
+				cardsInHand.add(new JRadioButton(name, cardImage));
+			}
+		
+			setCardsInHand(cardsInHand);
+			
+			for (JRadioButton b : cardsInHand) {
 				b.setForeground(Color.WHITE);
+				b.setOpaque(false);
 				b.setFont(new Font("Helvetica", Font.BOLD, 12));
 				b.setBounds(x, 50, 111, 154);
 				handPanel.add(b);

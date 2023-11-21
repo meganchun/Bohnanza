@@ -3,10 +3,8 @@
 package Model;
 
 public interface Turn {
-
-	public void startTurn();
 	
-	public boolean plant();
+	boolean plant(Card bean);
 	
 	public String discard();
 	
@@ -14,7 +12,6 @@ public interface Turn {
 	
 	public boolean purchaseBeanField(int coins);
 	
-	public void sell();
+	public boolean sell(int fieldNum);
 	
-	public void turnEnd();
 }

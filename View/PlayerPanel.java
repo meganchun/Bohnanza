@@ -53,7 +53,7 @@ public class PlayerPanel extends JPanel {
 		hand.setOpaque(false);
 		add(hand);
 	
-		field = new PlayerFieldPanel();
+		field = new PlayerFieldPanel(player);
 		field.setBounds(400,0,600,257);
 		field.setOpaque(false);
 		add(field);

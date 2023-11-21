@@ -10,22 +10,39 @@ import View.PlayerPanel;
 
 public class HumanPlayer extends Player implements Turn {
 
-	public HumanPlayer(String name, Queue<Card> hand, Map<Card, Integer> field, boolean thirdFieldOwned,
+	public HumanPlayer(String name, Queue<Card> hand, Card[] beansInField, int[] numBeansInField, boolean thirdFieldOwned,
 			int score, int currentStage) {
-		super(name, hand, field, thirdFieldOwned, score, currentStage);
+		super(name, hand, beansInField, numBeansInField, thirdFieldOwned, score, currentStage);
 		// TODO Auto-generated constructor stub
 	}
 
-	@Override
-	public void startTurn() {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
-	public boolean plant() {
+	public boolean plant(Card bean) {
 		// TODO Auto-generated method stub
+	
+		if (this.isThirdFieldOwned()) {
+			
+			for (int i = 0; i < 3; i++) {
+				
+				if (bean == this.getBeansInField()[i] || this.getNumBeansInField()[i] == 0) {
+					return true;
+				}
+			}
+		}
+		else {
+			for (int i = 0; i < 2; i++) {
+				
+				if (bean == this.getBeansInField()[i] || this.getNumBeansInField()[i] == 0) {
+					return true;
+					
+				}
+			}
+			
+		}
+		
 		return false;
+		
 	}
 
 	@Override
@@ -47,14 +64,13 @@ public class HumanPlayer extends Player implements Turn {
 	}
 
 	@Override
-	public void sell() {
-		// TODO Auto-generated method stub
+	public boolean sell(int fieldNum) {
 		
-	}
-
-	@Override
-	public void turnEnd() {
-		// TODO Auto-generated method stub
+		if (this.getNumBeansInField()[fieldNum] != 0) {
+			return true;
+		}
+		else 
+			return false;
 		
 	}
 

@@ -11,6 +11,7 @@ import Model.Card;
 
 public class DeckController {
 
+	private final int ENDLIMIT = 20;
 	// instance variables...
 	private Map<Integer, Card> numCardMap;
 	private Stack<Card> cardList = new Stack<Card>();
@@ -50,6 +51,8 @@ public class DeckController {
 		numCardMap.put(6, new Card("Chili", 18, chiliArr, "Chili.png"));
 		numCardMap.put(7, new Card("Blue", 20, blueArr, "Blue.png"));
 
+	
+
 		// loop through the bean map using a for-each
 		for (Map.Entry<Integer, Card> map : numCardMap.entrySet()) {
 
@@ -58,21 +61,37 @@ public class DeckController {
 				// add the Card object to the stack list
 				cardList.add(map.getValue());
 			}
+			
 		}
 	}
+	
 
 	
+	public Stack<Card> getCardList() {
+		return cardList;
+	}
+
+	public void setCardList(Stack<Card> cardList) {
+		this.cardList = cardList;
+	}
+
+	public Stack<Card> getDiscardList() {
+		return discardList;
+	}
+
+	public void setDiscardList(Stack<Card> discardList) {
+		this.discardList = discardList;
+	}
+
 	// method to discard card (WIP)
 	public void addToDiscard(Card bean) {
+		
 		garbageKey += 1;
 		// create a hashmap for the card objects
 		Map<Integer, Card> numCardMap = new HashMap<Integer, Card>();
 		
 		numCardMap.put(garbageKey, bean);
 		discardList.add(numCardMap.get(garbageKey));
-		
-		System.out.println("Cards in discard: " + garbageKey);
-		System.out.println(discardList.firstElement());
 	}
 
 	public Card[] drawTwoCards() {
@@ -98,12 +117,11 @@ public class DeckController {
 		return cardArr;
 	}
 
-	public boolean isEmpty() {
+	public boolean endOfGame() {
 		// check if the stack is empty...
 		// used to determine the end of the game
-		if (cardList.empty()) {
+		if (cardList.size() < 98 - ENDLIMIT)
 			return true;
-		}
 		
 		return false;
 	}
@@ -115,7 +133,7 @@ public class DeckController {
 	}
 
 	public Card popFromGarbage() {
-
+		
 		// pop a card from the garbage list stack
 		return discardList.pop();
 	}

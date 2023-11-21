@@ -36,7 +36,7 @@ public class GameFrame extends JFrame {
 		// specifications of the JFrame, to which will hold the JPanels
 		setTitle("Bohnanza Game");
 		setLayout(null);
-		setSize(1000, 700);
+		setSize(1000, 725);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		
@@ -56,7 +56,7 @@ public class GameFrame extends JFrame {
 		//Player two top panel
 		playerTwoPanel = new PlayerPanel(BohnanzaController.getPlayerTwo());
 		background.add(playerTwoPanel);
-		playerTwoPanel.setBounds(0, 430, 1000, 257);
+		playerTwoPanel.setBounds(0, 440, 1000, 257);
 		playerTwoPanel.setOpaque(false);
 		
 		setVisible(true);

@@ -1,6 +1,5 @@
-/* Aaron Su
- * 
- */
+//Aaron Su
+
 package View;
 
 import javax.swing.*;
@@ -15,11 +14,14 @@ public class CommonPanel extends JPanel {
 	private JButton discardButton = new JButton();
 	private JButton endExtendBtn = new JButton();
 
+
 	// constructor
 	public CommonPanel() {
+		
 		setLayout(null);
 
 		// set images for the JButtons
+		discardButton.setIcon(new ImageIcon("Images/discardBtn.png"));
 		discardDeck.setIcon(new ImageIcon("Images/discardDeck.png"));
 		deck.setIcon(new ImageIcon("Images/Beans/Back.png"));
 		discardButton.setIcon(new ImageIcon("Images/discardCardBtn.png"));
@@ -30,7 +32,7 @@ public class CommonPanel extends JPanel {
 		deck.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		discardButton.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		endExtendBtn.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		
+
 		discardDeck.setEnabled(false);
 		endExtendBtn.setEnabled(false);
 
@@ -54,6 +56,7 @@ public class CommonPanel extends JPanel {
 		}
 
 		// pack after the slots JButtons are packed
+		discardButton.setBounds(869, 50, 60, 60);
 		discardButton.setBounds(860, 70, 116, 35);
 		add(discardButton);
 		endExtendBtn.setBounds(860, 120, 116, 35);
@@ -62,7 +65,6 @@ public class CommonPanel extends JPanel {
 		setOpaque(false);
 	}
 
-	// getters and setters
 	public JButton getEndExtendBtn() {
 		return endExtendBtn;
 	}
@@ -74,11 +76,10 @@ public class CommonPanel extends JPanel {
 	public JButton getDiscardDeck() {
 		return discardDeck;
 	}
-
+	
 	public void setDiscardDeck(JButton discardDeck) {
 		this.discardDeck = discardDeck;
 	}
-
 	public JButton getDeck() {
 		return deck;
 	}
@@ -101,6 +102,10 @@ public class CommonPanel extends JPanel {
 
 	public void setDiscardButton(JButton discardButton) {
 		this.discardButton = discardButton;
+	}
+
+	public void displayDrawnCards() {
+
 	}
 
 }
