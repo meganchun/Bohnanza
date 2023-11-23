@@ -8,6 +8,7 @@ package Controller;
 
 import java.awt.Color;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Stack;
 
@@ -17,6 +18,7 @@ import javax.swing.JRadioButton;
 
 import Model.AIPlayer;
 import Model.Card;
+import Model.HumanPlayer;
 import Model.Player;
 import View.GameFrame;
 
@@ -51,6 +53,7 @@ public class AIController {
 			for (int i = 0; i < 3; i++) {
 		
 				String fileNameInOffered = gameFrame.getCommonPanel().getSlots()[i].getIcon().toString();
+				
 				//for each bean offered check if there are beans in field
 				for (int j = 0; j < 3; j++) {
 					
@@ -59,10 +62,30 @@ public class AIController {
 					//if the offered and the field match 
 					if (fileNameInOffered.equals(fileNameInField) && player.getNumBeansInField()[j] != 0) {
 						
-						hasPlanted = true;
-						JOptionPane.showMessageDialog(gameFrame, (player.getName() + " Planted A "+ player.getBeansInField()[j].getBeanType() + " Bean"),"Bean Planted!",
-							    JOptionPane.INFORMATION_MESSAGE, player.getPanel().getHand().getPlantIcon());
-						//Plant the card in their field
+						Card cardSelected = checkCardTypeSelected(fileNameInOffered);
+						
+						System.out.println(cardSelected.getBeanType());
+					
+						AIPlayer tempPlayer = (AIPlayer) player;
+						
+						//if the plant is a valid move on the field
+						if (tempPlayer.plant(cardSelected)) {
+							
+							hasPlanted = true;
+							
+							JOptionPane.showMessageDialog(gameFrame, (player.getName() + " Planted A "+ player.getBeansInField()[i].getBeanType() + " Bean"),"Bean Planted!",
+								    JOptionPane.INFORMATION_MESSAGE, player.getPanel().getHand().getPlantIcon());
+					
+							//update the field
+							gui.updateField(player, cardSelected, numCardsInSlot[i]) ;
+							
+							gameFrame.getCommonPanel().getNumCardLabel()[i].setText("0");
+							gameFrame.getCommonPanel().getSlots()[i].setEnabled(false);
+							gameFrame.getCommonPanel().getSlots()[i].setIcon(new ImageIcon("Images/slotsBtn.png"));
+							
+						
+						}
+							
 					}
 				}
 			
@@ -73,7 +96,21 @@ public class AIController {
 					    JOptionPane.INFORMATION_MESSAGE, player.getPanel().getHand().getPlantIcon());
 			}
 			
-			gameFrame.getCommonPanel().getDiscardButton().setEnabled(false);
+			for (int i = 0; i < 3; i++) {
+				if (!(gameFrame.getCommonPanel().getSlots()[i].getIcon().toString().equals("Images/slotsBtn.png"))) {
+					Card cardDiscard = checkCardTypeSelected(gameFrame.getCommonPanel().getSlots()[i].getIcon().toString());
+					deck.addToDiscard(cardDiscard);
+					gameFrame.getCommonPanel().getDiscardDeck().setIcon(new ImageIcon("Images/Beans/" + cardDiscard.getBeanType() + ".png"));
+				}
+
+				gameFrame.getCommonPanel().getSlots()[i].setIcon(new ImageIcon("Images/slotsBtn.png"));
+			}
+			
+			//reset the slots counter	
+			for (int i = 0; i < 3; i++) {
+				gameFrame.getCommonPanel().getNumCardLabel()[i].setText("0");
+				numCardsInSlot[i] = 0;
+			}
 			
 			//add a delay 
 			Thread.sleep(2000);
@@ -109,7 +146,7 @@ public class AIController {
 			
 			}
 			
-			//check if there is an empty field and there are no
+			//check if there is an empty field and there are no 
 		}
 	}
 	
@@ -132,13 +169,16 @@ public class AIController {
 					gui.updateField(player, player.getHand().peek(), 1);
 					
 					gui.updateHand(player);
-					
+				
 					JOptionPane.showMessageDialog(gameFrame, player.getName() + " Planted A " + player.getHand().peek().getBeanType() +" Bean.","Bean Planted!",
 						    JOptionPane.INFORMATION_MESSAGE, player.getPanel().getHand().getPlantIcon());
 					
 					player.getHand().remove();
 				
 					hasPlanted = true;
+					
+
+				
 
 				}
 				
@@ -149,10 +189,6 @@ public class AIController {
 			if (!hasPlanted) {
 				JOptionPane.showMessageDialog(gameFrame, player.getName() + " Has Not Planted Any Card From Their Hand.","Bean Planted!",
 					    JOptionPane.INFORMATION_MESSAGE, player.getPanel().getHand().getPlantIcon());
-				
-				for (int i = 0; i < 3; i++) {
-					
-				}
 			}
 			
 			//add a delay 
@@ -165,9 +201,6 @@ public class AIController {
 		//hard AI Controller 
 		else {
 			
-			System.out.println("Plant hard ai");
-			
-			AIPlayer temp = (AIPlayer) player;
 		}
 	}
 	
@@ -175,8 +208,6 @@ public class AIController {
 		
 		//easy AI Controller 
 		if (mode.equals("easy")) {
-			
-			System.out.println("Discarding");
 			
 			Queue<Card> tempHand = new LinkedList<Card>();
 			
@@ -238,7 +269,6 @@ public class AIController {
 			Thread.sleep(2000);
 			
 			extendedDraw(player);
-			
 		}
 		
 		//hard AI Controller 
@@ -252,10 +282,8 @@ public class AIController {
 		
 		if (mode.equals("easy")) {
 			
-			System.out.println("Extended Turn");
-			
-			gameFrame.getCommonPanel().getDeck().setEnabled(false);
-
+			// pop a card from the deck and visually display on one of the 3 slots for the
+			// player to choose from
 			for (int i = 0; i < 3; i++) {
 				
 				gameFrame.getCommonPanel().getSlots()[i]
@@ -268,55 +296,101 @@ public class AIController {
 				// check if the top card on the discard pile is the same as one of the cards in
 				// the slots...
 				// will result in disabling the options, and waiting until the deck is called
-				if (gameFrame.getCommonPanel().getDiscardDeck().getIcon().toString()
+				while (gameFrame.getCommonPanel().getDiscardDeck().getIcon().toString()
 						.equals(gameFrame.getCommonPanel().getSlots()[i].getIcon().toString())) {
-					gameFrame.getCommonPanel().getDiscardDeck().setEnabled(true);
+					
+					// previous instance of the discarded card
+					Card cardDiscard = deck.popFromDiscard();
 
-					setEnabled(false);
-					break;
+					// increment the number of cards in that slot if it equals to the previous
+					// discarded card object
+					for (int j = 0; j < 3; j++) {
+						if (gameFrame.getCommonPanel().getSlots()[i].getIcon().toString()
+								.equals("Images/Beans/" + cardDiscard.getFileName())) {
+							numCardsInSlot[i] += 1;
+							gameFrame.getCommonPanel().getNumCardLabel()[i].setText(String.valueOf(numCardsInSlot[i]));
+						}
+					}
+
+					// new instance of the discarded card
+					if (deck.getDiscardList().isEmpty()) {
+						gameFrame.getCommonPanel().getDiscardDeck().setIcon(new ImageIcon("Images/discardDeck.png"));
+					}
+
+					else {
+						cardDiscard = deck.popFromDiscard();
+						gameFrame.getCommonPanel().getDiscardDeck()
+								.setIcon(new ImageIcon("Images/Beans/" + cardDiscard.getFileName()));
+					}
+
+				}
+
+			
+			}
+		
+			boolean hasPlanted = true;
+			//check the types of beans offered
+			for (int i = 0; i < 3; i++) {
+		
+				String fileNameInOffered = gameFrame.getCommonPanel().getSlots()[i].getIcon().toString();
+				//for each bean offered check if there are beans in field
+				for (int j = 0; j < 3; j++) {
+					
+					String fileNameInField = "Images/Beans/"+player.getBeansInField()[j].getFileName();
+					
+					//if the offered and the field match 
+					if (fileNameInOffered.equals(fileNameInField) && player.getNumBeansInField()[j] != 0) {
+						
+						Card cardSelected = checkCardTypeSelected(fileNameInOffered);
+						
+						System.out.println(cardSelected.getBeanType());
+					
+						AIPlayer tempPlayer = (AIPlayer) player;
+						
+						//if the plant is a valid move on the field
+						if (tempPlayer.plant(cardSelected)) {
+							
+							hasPlanted = true;
+							JOptionPane.showMessageDialog(gameFrame, (player.getName() + " Planted A "+ player.getBeansInField()[i].getBeanType() + " Bean"),"Bean Planted!",
+								    JOptionPane.INFORMATION_MESSAGE, player.getPanel().getHand().getPlantIcon());
+					
+							//update the field
+							gui.updateField(player, cardSelected, numCardsInSlot[i]) ;
+							
+							gameFrame.getCommonPanel().getNumCardLabel()[i].setText("0");
+							gameFrame.getCommonPanel().getSlots()[i].setEnabled(false);
+							gameFrame.getCommonPanel().getSlots()[i].setIcon(new ImageIcon("Images/slotsBtn.png"));
+						}
+							
+						//Plant the card in their field
+					}
+				}
+			
+			}
+			
+			if (!hasPlanted) {
+				JOptionPane.showMessageDialog(gameFrame, player.getName() + " Has Not Planted Any Card From The Offered Card.","Bean Planted!",
+					    JOptionPane.INFORMATION_MESSAGE, player.getPanel().getHand().getPlantIcon());
+			}
+			
+			
+			// loop through all the slots and revert the cards chosen to the original
+			// image...
+			// for cards that were not chosen, disable them for the next player to use
+			for (int i = 0; i < 3; i++) {
+				if (gameFrame.getCommonPanel().getSlots()[i].isEnabled() == false) {
+					gameFrame.getCommonPanel().getSlots()[i].setIcon(new ImageIcon("Images/slotsBtn.png"));
 				}
 
 				else {
-					gameFrame.getCommonPanel().getSlots()[i].setEnabled(true);
+					gameFrame.getCommonPanel().getSlots()[i].setEnabled(false);
 				}
+					
 
+		}
 
-				gameFrame.getCommonPanel().getEndExtendBtn().setEnabled(true);
-			}
 			
-			// previous instance of the discarded card
-			Card cardDiscard = deck.popFromDiscard();
-						
-			// increment the number of cards in that slot if it equals to the previous
-			// discarded card object
-			for (int i = 0; i < 3; i++) {
-				if (gameFrame.getCommonPanel().getSlots()[i].getIcon().toString()
-						.equals("Images/Beans/" + cardDiscard.getFileName())) {
-					numCardsInSlot[i] += 1;
-					gameFrame.getCommonPanel().getNumCardLabel()[i].setText(String.valueOf(numCardsInSlot[i]));
-				}
-			}
 
-			// new instance of the discarded card
-			if (deck.getDiscardList().isEmpty()) {
-				gameFrame.getCommonPanel().getDiscardDeck().setIcon(new ImageIcon("Images/discardDeck.png"));
-			}
-
-			else {
-				cardDiscard = deck.popFromDiscard();
-				gameFrame.getCommonPanel().getDiscardDeck()
-						.setIcon(new ImageIcon("Images/Beans/" + cardDiscard.getFileName()));
-			}
-
-			// loop to double check no cards match that of the top card in the discarded
-			// pile before moving on
-			for (int i = 0; i < 3; i++) {
-				if (!(gameFrame.getCommonPanel().getSlots()[i].getIcon().toString()
-						.equals(gameFrame.getCommonPanel().getDiscardDeck().getIcon().toString()))) {
-					gameFrame.getCommonPanel().getDiscardDeck().setEnabled(false);
-					setEnabled(true);
-				}
-			}
 			//add a delay 
 			Thread.sleep(2000);
 			
@@ -333,14 +407,13 @@ public class AIController {
 		
 		if (mode.equals("easy")) {
 			
-			System.out.println("Selling");
-			
 			//only sells at before drawing two cards
 			
 			
 			boolean hasSold = false;
 			int numFields = 2; //number of fields free
-					
+			
+		
 			//check if the third field is owned
 			if (player.isThirdFieldOwned()) 
 				numFields = 3;
@@ -414,6 +487,20 @@ public class AIController {
 		gui.disableInactiveComponents(player);
 		BohnanzaController.getGameFrame().getCommonPanel().getDiscardButton().setEnabled(true);
 		
+		
+	}
+	
+	public Card checkCardTypeSelected(String fileName) {
+		
+		for (Map.Entry<Integer,Card> entry : deck.getNumCardMap().entrySet())   {
+			
+			String file = "Images/Beans/"+entry.getValue().getFileName();
+			
+			if (file.equals(fileName)) {
+				return entry.getValue();
+			}
+		}
+		return null;
 		
 	}
 	

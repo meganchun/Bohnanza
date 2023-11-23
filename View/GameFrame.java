@@ -38,6 +38,7 @@ public class GameFrame extends JFrame {
 		setLayout(null);
 		setSize(1000, 725);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setResizable(false); 
 		setLocationRelativeTo(null);
 		
 		add(background);

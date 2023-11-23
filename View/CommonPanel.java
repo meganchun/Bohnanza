@@ -17,6 +17,8 @@ public class CommonPanel extends JPanel {
 	private JLabel [] numCardLabel = new JLabel[3];
 	private JButton discardButton = new JButton();
 	private JButton endExtendBtn = new JButton();
+	private JLabel stage = new JLabel("Current Stage:");
+	private JLabel staage;
 
 
 	// constructor

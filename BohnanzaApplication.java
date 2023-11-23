@@ -1,11 +1,10 @@
-import Controller.BohnanzaController;
-import View.ModeSelectFrame;
+import View.HomeFrame;
 
 public class BohnanzaApplication {
 	
 	public static void main(String[] args) {
 		
-		ModeSelectFrame game = new ModeSelectFrame();
+		HomeFrame game = new HomeFrame();
 	
 	}
 }

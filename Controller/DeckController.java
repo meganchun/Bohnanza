@@ -11,7 +11,7 @@ import Model.Card;
 
 public class DeckController {
 
-	private final int ENDLIMIT = 20;
+	private final int ENDLIMIT = 30;
 	// instance variables...
 	private Map<Integer, Card> numCardMap;
 	private Stack<Card> cardList = new Stack<Card>();

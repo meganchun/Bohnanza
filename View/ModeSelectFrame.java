@@ -37,11 +37,11 @@ public class ModeSelectFrame extends JFrame implements ActionListener{
 	
 	public ModeSelectFrame() {
 		
-		this.setTitle("Mode Select"); 
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
-		this.setLocationRelativeTo(null);
+		this.setTitle("Mode Select"); 	
 		this.setResizable(false); 
 		this.setSize(1000, 700); 
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+		this.setLocationRelativeTo(null);
 	
 		//Megan - Update needed, Benjamin's version did not work
 		JLabel background = new JLabel(new ImageIcon("Images/modeSelectBackground.png"));
@@ -142,6 +142,8 @@ public class ModeSelectFrame extends JFrame implements ActionListener{
 		}
 		
 		else if (e.getSource() == exitBtn) {
+			
+			new HomeFrame();
 			this.dispose();//gets rid of the previous window
 		
 		}	

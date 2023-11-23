@@ -173,11 +173,12 @@ public class GUIController {
 	
 	public void updateSell(Player player, int fieldNumber) {
 		
+		int newScore = player.getScore() + player.getBeansInField()[fieldNumber].getCoinsEarned(player.getNumBeansInField()[fieldNumber]);
 		//update player's score 
-		player.setScore(player.getBeansInField()[fieldNumber].getCoinsEarned(player.getNumBeansInField()[fieldNumber]));
+		player.setScore(newScore);
 		
 		//update gui score
-		player.getPanel().getScoreNum().setText(Integer.toString(player.getScore()));
+		player.getPanel().getScoreNum().setText(Integer.toString(newScore));
 	
 		//update the field
 		player.getPanel().getField().getCardImages()[fieldNumber].setIcon(new ImageIcon("Images/slotsBtn.png"));
