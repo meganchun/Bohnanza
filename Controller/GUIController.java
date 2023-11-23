@@ -85,7 +85,7 @@ public class GUIController {
 		
 	}
 	
-	public void updateField(Player player, Card bean) {
+	public void updateField(Player player, Card bean, int numBean) {
 		
 		boolean beanTypePlanted = false;
 		int numFieldAvailable;
@@ -101,8 +101,8 @@ public class GUIController {
 			//if the bean already exists in the field
 			if (player.getBeansInField()[i] == bean && player.getNumBeansInField()[i] != 0) {
 				player.getPanel().getField().getCardCounter()[i].setText(
-						Integer.toString(player.getNumBeansInField()[i]+1));
-				player.getNumBeansInField()[i] += 1;
+						Integer.toString(player.getNumBeansInField()[i]+numBean));
+				player.getNumBeansInField()[i] += numBean;
 				beanTypePlanted = true;
 				break;
 			}
@@ -115,10 +115,10 @@ public class GUIController {
 				if (player.getNumBeansInField()[i] == 0) {
 
 					player.getPanel().getField().getCardCounter()[i].setText(
-							Integer.toString(player.getNumBeansInField()[i]+1));
+							Integer.toString(player.getNumBeansInField()[i]+numBean));
 					player.getPanel().getField().getCardImages()[i].setIcon(new ImageIcon(
 							"Images/Beans/"+bean.getFileName()));
-					player.getNumBeansInField()[i] += 1;
+					player.getNumBeansInField()[i] += numBean;
 					player.getBeansInField()[i] = bean;
 					break;
 				}

@@ -26,12 +26,14 @@ public class ModeSelectFrame extends JFrame implements ActionListener{
 	
 	private JTextField nameOne;
 	private JTextField nameTwo;
+	private JTextField nameOneAI;
 	
 	private JLabel playerPlayerImage;
 	private JLabel playerComputerImage;
 	
 	public static String strNameOne;
 	public static String strNameTwo;
+	public static String strNameOneAI;
 	
 	public ModeSelectFrame() {
 		
@@ -104,9 +106,15 @@ public class ModeSelectFrame extends JFrame implements ActionListener{
 		exitBtn.addActionListener(this);
 		background.add(exitBtn);
 
+		nameOneAI = new JTextField("Player One's Name");
+		nameOneAI.addActionListener(this);
+		nameOneAI.setFont(new Font("Helvetica", Font.PLAIN, 16));
+		nameOneAI.setBounds(58, 200, 217, 48);
+		modeBackgroundTwo.add(nameOneAI);
+				
 		Icon easyImage = new ImageIcon("Images/easyBtn.png");
 		easyBtn = new JButton(easyImage);
-		easyBtn.setBounds(58, 250, 217, 48);
+		easyBtn.setBounds(58, 260, 217, 48);
 		easyBtn.addActionListener(this);
 		modeBackgroundTwo.add(easyBtn);
 		
@@ -140,11 +148,16 @@ public class ModeSelectFrame extends JFrame implements ActionListener{
 		
 		else if (e.getSource() == easyBtn) {
 			
+			strNameOneAI = nameOneAI.getText();
+			
 			BohnanzaController bc = new BohnanzaController("easy");
 			this.dispose();//gets rid of the previous window
 		}	
 	
 		else if (e.getSource() == difficultBtn) {
+			
+			strNameOneAI = nameOneAI.getText();
+			
 			BohnanzaController bc = new BohnanzaController("hard");
 			this.dispose();//gets rid of the previous window
 			//SurveyMenu surveyWindow = new SurveyMenu();

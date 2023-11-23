@@ -54,7 +54,7 @@ public class BohnanzaController implements ActionListener {
 	private Player currentPlayer;
 
 	private int numOfCardsDrawed = 0;
-	private int numOfDeckClicks = 0;
+	private int[] numCardsInSlot = new int[3];
 	private int numOfPlants = 0;
 	
 	private boolean firstTurn = true;
@@ -94,12 +94,12 @@ public class BohnanzaController implements ActionListener {
 			playerTwo = new HumanPlayer(ModeSelectFrame.strNameTwo,q1,b2,numB2,false,0,1);
 		}
 		else if (mode.equals("easy")) {
-			playerOne = new HumanPlayer("Player One",q,b1,numB1,false,0,1);
+			playerOne = new HumanPlayer(ModeSelectFrame.strNameOneAI,q,b1,numB1,false,0,1);
 			playerTwo = new AIPlayer("AI Player",q1,b2,numB2,false,0,1,"easy");
 			
 		}
 		else {
-			playerOne = new HumanPlayer("Player One",q,b1,numB1,false,0,1);
+			playerOne = new HumanPlayer(ModeSelectFrame.strNameOneAI,q,b1,numB1,false,0,1);
 			playerTwo = new AIPlayer("AI Player",q1,b2,numB2,false,0,1,"hard");
 			
 		}
@@ -128,13 +128,13 @@ public class BohnanzaController implements ActionListener {
 		// Create action listeners for each of the 3 cards drawn from the deck
 		for (int i = 0; i < 3; i++) {
 			int index = i;
-			gameFrame.getCommonPanel().getSlots()[0][i].addActionListener(new ActionListener() {
+			gameFrame.getCommonPanel().getSlots()[i].addActionListener(new ActionListener() {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					// add the cards to hand and disable them so they can't be added twice
 					
-					Card cardSelected = checkCardTypeSelected(gameFrame.getCommonPanel().getSlots()[0][index].getIcon().toString());
+					Card cardSelected = checkCardTypeSelected(gameFrame.getCommonPanel().getSlots()[index].getIcon().toString());
 					
 					System.out.println(cardSelected.getBeanType());
 				
@@ -143,11 +143,11 @@ public class BohnanzaController implements ActionListener {
 					//if the plant is a valid move on the field
 					if (player.plant(cardSelected)) {
 						//update the field
-						gui.updateField(currentPlayer, cardSelected);
+						gui.updateField(currentPlayer, cardSelected, numCardsInSlot[index]) ;
 						
-						
-						gameFrame.getCommonPanel().getSlots()[0][index].setEnabled(false);
-						gameFrame.getCommonPanel().getSlots()[0][index].setIcon(new ImageIcon("Images/slotsBtn.png"));
+						gameFrame.getCommonPanel().getNumCardLabel()[index].setText("0");
+						gameFrame.getCommonPanel().getSlots()[index].setEnabled(false);
+						gameFrame.getCommonPanel().getSlots()[index].setIcon(new ImageIcon("Images/slotsBtn.png"));
 						
 						JOptionPane.showMessageDialog(gameFrame, currentPlayer.getName() + " Planted","Bean Planted!",
 								    JOptionPane.INFORMATION_MESSAGE, currentPlayer.getPanel().getHand().getPlantIcon());
@@ -284,14 +284,14 @@ public class BohnanzaController implements ActionListener {
 					// change all the card icons to a temp card, and then disable them...
 					// make sure to check if it is not a temp card because we do not want to fill our discard pile with useless cards
 					for (int i = 0; i < 3; i++) {
-						if (!(gameFrame.getCommonPanel().getSlots()[0][i].getIcon().toString().equals("Images/slotsBtn.png"))) {
-							cardDiscard = checkCardTypeSelected(gameFrame.getCommonPanel().getSlots()[0][i].getIcon().toString());
+						if (!(gameFrame.getCommonPanel().getSlots()[i].getIcon().toString().equals("Images/slotsBtn.png"))) {
+							cardDiscard = checkCardTypeSelected(gameFrame.getCommonPanel().getSlots()[i].getIcon().toString());
 							deck.addToDiscard(cardDiscard);
 							gameFrame.getCommonPanel().getDiscardDeck().setIcon(new ImageIcon("Images/Beans/" + cardDiscard.getBeanType() + ".png"));
 						}
 	
-						gameFrame.getCommonPanel().getSlots()[0][i].setIcon(new ImageIcon("Images/slotsBtn.png"));
-						gameFrame.getCommonPanel().getSlots()[0][i].setEnabled(false);
+						gameFrame.getCommonPanel().getSlots()[i].setIcon(new ImageIcon("Images/slotsBtn.png"));
+						gameFrame.getCommonPanel().getSlots()[i].setEnabled(false);
 					}
 	
 					currentPlayer.setCurrentStage(2);
@@ -331,7 +331,7 @@ public class BohnanzaController implements ActionListener {
 							numOfPlants++;
 							
 							//update the field
-							gui.updateField(currentPlayer, currentPlayer.getHand().peek());
+							gui.updateField(currentPlayer, currentPlayer.getHand().peek(), 1);
 							
 							
 							currentPlayer.getHand().remove();
@@ -418,71 +418,66 @@ public class BohnanzaController implements ActionListener {
 			
 		}
 		
-		//STEP 3: EXTENDED TURN
-		//------------------------------------------------------------
+		// STEP 3: EXTENDED TURN
+		// ------------------------------------------------------------
 		if (currentPlayer.getCurrentStage() == 3) {
-			
 			gameFrame.getCommonPanel().getDeck().setEnabled(true);
-			gameFrame.getCommonPanel().getDiscardButton().setEnabled(false);
 
-			if (e.getSource() == gameFrame.getCommonPanel().getDeck()) {
-				
-				if (!deck.endOfGame()) {
-					gameFrame.getCommonPanel().getDeck().setEnabled(false);
-	
-					// pop a card from the deck and visually display on one of the 3 slots for the player to choose from
-					for (int i = 0; i < 3; i++) {
-						gameFrame.getCommonPanel().getSlots()[0][i].setIcon(new ImageIcon("Images/Beans/" + deck.pop().getFileName()));
-	
-						// check if the top card on the discard pile is the same as one of the cards in the slots...
-						// will result in disabling the options, and waiting until the deck is called
-						if (gameFrame.getCommonPanel().getDiscardDeck().getIcon().toString().equals(gameFrame.getCommonPanel().getSlots()[0][i].getIcon().toString())) {
-							
-							//enable the discard deck
-							gameFrame.getCommonPanel().getDiscardDeck().setEnabled(true);
-						}
-	
-						else {
-							gameFrame.getCommonPanel().getSlots()[0][i].setEnabled(true);
-							gameFrame.getCommonPanel().getEndExtendBtn().setEnabled(true);
-						}
-					}
-				}
-				//if there are no more cards to pick up
-				else {
-					gameFrame.setVisible(false);
-				}
-			}
-			
-			if (e.getSource() == gameFrame.getCommonPanel().getDiscardDeck()) {
-				
-				if (!deck.getDiscardList().isEmpty())
-					gameFrame.getCommonPanel().getDiscardDeck().setIcon(new ImageIcon("Images/Beans/" + deck.popFromGarbage().getFileName()));
-				else
-					gameFrame.getCommonPanel().getDiscardDeck().setIcon(new ImageIcon("Images/slotsBtn.png"));
-				
-				
-			}
-		
-			// signify the end of their extended turn
-			if (e.getSource() == gameFrame.getCommonPanel().getEndExtendBtn()) {
-				gameFrame.getCommonPanel().getEndExtendBtn().setEnabled(false);
-				
+			if (e.getSource() == gameFrame.getCommonPanel().getDeck() && currentPlayer.getCurrentStage() == 3) {
+				gameFrame.getCommonPanel().getDeck().setEnabled(false);
 
-				// loop through all the slots and revert the cards chosen to the original image...
-				// for cards that were not chosen, disable them for the next player to use
+				// pop a card from the deck and visually display on one of the 3 slots for the
+				// player to choose from
 				for (int i = 0; i < 3; i++) {
-					if (gameFrame.getCommonPanel().getSlots()[0][i].isEnabled() == false) {
-						gameFrame.getCommonPanel().getSlots()[0][i].setIcon(new ImageIcon("Images/slotsBtn.png"));
+					gameFrame.getCommonPanel().getSlots()[i]
+							.setIcon(new ImageIcon("Images/Beans/" + deck.pop().getFileName()));
+					numCardsInSlot[i] += 1;
+					gameFrame.getCommonPanel().getNumCardLabel()[i].setText(String.valueOf(numCardsInSlot[i]));
+
+					validateCards(i);
+
+					// check if the top card on the discard pile is the same as one of the cards in
+					// the slots...
+					// will result in disabling the options, and waiting until the deck is called
+					if (gameFrame.getCommonPanel().getDiscardDeck().getIcon().toString()
+							.equals(gameFrame.getCommonPanel().getSlots()[i].getIcon().toString())) {
+						gameFrame.getCommonPanel().getDiscardDeck().setEnabled(true);
+
+						setEnabled(false);
+						break;
 					}
 
 					else {
-						gameFrame.getCommonPanel().getSlots()[0][i].setEnabled(false);
+						gameFrame.getCommonPanel().getSlots()[i].setEnabled(true);
+					}
+				}
+
+				gameFrame.getCommonPanel().getEndExtendBtn().setEnabled(true);
+			}
+
+			// signify the end of their extended turn
+			if (e.getSource() == gameFrame.getCommonPanel().getEndExtendBtn()) {
+				gameFrame.getCommonPanel().getEndExtendBtn().setEnabled(false);
+
+				//reset the slots counter	
+				for (int i = 0; i < 3; i++) {
+					gameFrame.getCommonPanel().getNumCardLabel()[i].setText("0");
+				}
+				// loop through all the slots and revert the cards chosen to the original
+				// image...
+				// for cards that were not chosen, disable them for the next player to use
+				for (int i = 0; i < 3; i++) {
+					if (gameFrame.getCommonPanel().getSlots()[i].isEnabled() == false) {
+						gameFrame.getCommonPanel().getSlots()[i].setIcon(new ImageIcon("Images/slotsBtn.png"));
+					}
+
+					else {
+						gameFrame.getCommonPanel().getSlots()[i].setEnabled(false);
 					}
 				}
 
 				JOptionPane.showMessageDialog(gameFrame,
-						   currentPlayer.getName() + " finished their extended turn, draw 2 cards!");
+						currentPlayer.getName() + " finished their extended turn, draw 2 cards!");
 				currentPlayer.setCurrentStage(4);
 			}
 		}
@@ -547,8 +542,8 @@ public class BohnanzaController implements ActionListener {
 						// if the image of the card does not equal to a temporary image, as in it was not picked during the previous turn,
 						// enable the card
 
-						if (!(gameFrame.getCommonPanel().getSlots()[0][i].getIcon().toString().equals("Images/slotsBtn.png"))) {
-							gameFrame.getCommonPanel().getSlots()[0][i].setEnabled(true);
+						if (!(gameFrame.getCommonPanel().getSlots()[i].getIcon().toString().equals("Images/slotsBtn.png"))) {
+							gameFrame.getCommonPanel().getSlots()[i].setEnabled(true);
 						}
 					}
 					
@@ -556,7 +551,7 @@ public class BohnanzaController implements ActionListener {
 					if (currentPlayer instanceof AIPlayer) {
 						
 						for (int i = 0; i < 3; i++) {
-							gameFrame.getCommonPanel().getSlots()[0][i].removeActionListener(this);
+							gameFrame.getCommonPanel().getSlots()[i].removeActionListener(this);
 						}
 						
 						try {
@@ -574,14 +569,12 @@ public class BohnanzaController implements ActionListener {
 							// if the image of the card does not equal to a temporary image, as in it was not picked during the previous turn,
 							// enable the card
 
-							if (!(gameFrame.getCommonPanel().getSlots()[0][i].getIcon().toString().equals("Images/slotsBtn.png"))) {
-								gameFrame.getCommonPanel().getSlots()[0][i].setEnabled(true);
+							if (!(gameFrame.getCommonPanel().getSlots()[i].getIcon().toString().equals("Images/slotsBtn.png"))) {
+								gameFrame.getCommonPanel().getSlots()[i].setEnabled(true);
 							}
 						}
 						
 					}
-					
-					
 				}
 			}
 		}
@@ -643,6 +636,42 @@ public class BohnanzaController implements ActionListener {
 			}
 		}
 		
+		if (e.getSource() == gameFrame.getCommonPanel().getDiscardDeck()) {
+			// previous instance of the discarded card
+			cardDiscard = deck.popFromDiscard();
+
+			// increment the number of cards in that slot if it equals to the previous
+			// discarded card object
+			for (int i = 0; i < 3; i++) {
+				if (gameFrame.getCommonPanel().getSlots()[i].getIcon().toString()
+						.equals("Images/Beans/" + cardDiscard.getFileName())) {
+					numCardsInSlot[i] += 1;
+					gameFrame.getCommonPanel().getNumCardLabel()[i].setText(String.valueOf(numCardsInSlot[i]));
+				}
+			}
+
+			// new instance of the discarded card
+			if (deck.getDiscardList().isEmpty()) {
+				gameFrame.getCommonPanel().getDiscardDeck().setIcon(new ImageIcon("Images/discardDeck.png"));
+			}
+
+			else {
+				cardDiscard = deck.popFromDiscard();
+				gameFrame.getCommonPanel().getDiscardDeck()
+						.setIcon(new ImageIcon("Images/Beans/" + cardDiscard.getFileName()));
+			}
+
+			// loop to double check no cards match that of the top card in the discarded
+			// pile before moving on
+			for (int i = 0; i < 3; i++) {
+				if (!(gameFrame.getCommonPanel().getSlots()[i].getIcon().toString()
+						.equals(gameFrame.getCommonPanel().getDiscardDeck().getIcon().toString()))) {
+					gameFrame.getCommonPanel().getDiscardDeck().setEnabled(false);
+					setEnabled(true);
+				}
+			}
+		}
+		
 	}
 	
 	public Card checkCardTypeSelected(String fileName) {
@@ -658,6 +687,45 @@ public class BohnanzaController implements ActionListener {
 		return null;
 		
 	}
+	
+	public void setEnabled(boolean condition) {
+		for (int i = 0; i < 3; i++) {
+			if (gameFrame.getCommonPanel().getSlots()[i].getIcon().toString().equals("Images/slotsBtn.png")) {
+				gameFrame.getCommonPanel().getSlots()[i]
+						.setIcon(new ImageIcon("Images/Beans/" + deck.pop().getFileName()));
+				numCardsInSlot[i] += 1;
+				gameFrame.getCommonPanel().getNumCardLabel()[i].setText(String.valueOf(numCardsInSlot[i]));
+
+				validateCards(i);
+			}
+
+			gameFrame.getCommonPanel().getSlots()[i].setEnabled(condition);
+			;
+		}
+	}
+
+	private void validateCards(int i) {
+		for (int x = 0; x < 3; x++) {
+
+			// check if there are duplicates of cards in the slots
+			if (gameFrame.getCommonPanel().getSlots()[x].getIcon().toString()
+					.equals(gameFrame.getCommonPanel().getSlots()[i].getIcon().toString()) && x != i) {
+
+				numCardsInSlot[i] += 1;
+				gameFrame.getCommonPanel().getNumCardLabel()[i].setText(String.valueOf(numCardsInSlot[i]));
+				gameFrame.getCommonPanel().getSlots()[x]
+						.setIcon(new ImageIcon("Images/Beans/" + deck.pop().getFileName()));
+			}
+
+			// if it is still equal, recursively call the method again to perform the
+			// actions
+			if ((gameFrame.getCommonPanel().getSlots()[x].getIcon().toString()
+					.equals(gameFrame.getCommonPanel().getSlots()[i].getIcon().toString())) && x != i) {
+				validateCards(i);
+			}
+		}
+	}
+
 	
 	public static void playMusic(String filepath) {
 		

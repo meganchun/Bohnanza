@@ -132,7 +132,7 @@ public class DeckController {
 		return cardList.pop();
 	}
 
-	public Card popFromGarbage() {
+	public Card popFromDiscard() {
 		
 		// pop a card from the garbage list stack
 		return discardList.pop();

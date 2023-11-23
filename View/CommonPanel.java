@@ -2,6 +2,9 @@
 
 package View;
 
+import java.awt.Color;
+import java.awt.Font;
+
 import javax.swing.*;
 
 @SuppressWarnings("serial")
@@ -10,7 +13,8 @@ public class CommonPanel extends JPanel {
 	// instance variables
 	private JButton discardDeck = new JButton();
 	private JButton deck = new JButton();
-	private JButton[][] slots = new JButton[1][3];
+	private JButton[] slots = new JButton[3];
+	private JLabel [] numCardLabel = new JLabel[3];
 	private JButton discardButton = new JButton();
 	private JButton endExtendBtn = new JButton();
 
@@ -45,12 +49,20 @@ public class CommonPanel extends JPanel {
 		// initialize the JButtons for the slots
 		int xCord = 433;
 		for (int i = 0; i < 3; i++) {
-			slots[0][i] = new JButton();
-			slots[0][i].setEnabled(false);
-			slots[0][i].setIcon(new ImageIcon("Images/slotsBtn.png"));
-			slots[0][i].setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-			slots[0][i].setBounds(xCord, 35, 110, 153);
-			add(slots[0][i]);
+			slots[i] = new JButton();
+			slots[i].setEnabled(false);
+			slots[i].setIcon(new ImageIcon("Images/slotsBtn.png"));
+			slots[i].setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+			slots[i].setBounds(xCord, 35, 110, 153);
+			
+			numCardLabel[i] = new JLabel();
+			numCardLabel[i].setText("0");
+			numCardLabel[i].setFont(new Font("Helvetica", Font.BOLD, 16));
+			numCardLabel[i].setForeground(Color.WHITE);
+			numCardLabel[i].setBounds(xCord + 51, 15, 20, 20);
+			
+			add(numCardLabel[i]);
+			add(slots[i]);
 
 			xCord += 145;
 		}
@@ -88,11 +100,11 @@ public class CommonPanel extends JPanel {
 		this.deck = deck;
 	}
 
-	public JButton[][] getSlots() {
+	public JButton[] getSlots() {
 		return slots;
 	}
 
-	public void setSlots(JButton[][] slots) {
+	public void setSlots(JButton[] slots) {
 		this.slots = slots;
 	}
 
@@ -106,6 +118,14 @@ public class CommonPanel extends JPanel {
 
 	public void displayDrawnCards() {
 
+	}
+	
+	public JLabel[] getNumCardLabel() {
+		return numCardLabel;
+	}
+
+	public void setNumCardLabel(JLabel[] numCardLabel) {
+		this.numCardLabel = numCardLabel;
 	}
 
 }
