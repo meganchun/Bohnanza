@@ -109,7 +109,7 @@ public class AIController {
 			
 			}
 			
-			//check if there is an empty field and there are no 
+			//check if there is an empty field and there are no
 		}
 	}
 	
@@ -149,6 +149,10 @@ public class AIController {
 			if (!hasPlanted) {
 				JOptionPane.showMessageDialog(gameFrame, player.getName() + " Has Not Planted Any Card From Their Hand.","Bean Planted!",
 					    JOptionPane.INFORMATION_MESSAGE, player.getPanel().getHand().getPlantIcon());
+				
+				for (int i = 0; i < 3; i++) {
+					
+				}
 			}
 			
 			//add a delay 
@@ -161,6 +165,9 @@ public class AIController {
 		//hard AI Controller 
 		else {
 			
+			System.out.println("Plant hard ai");
+			
+			AIPlayer temp = (AIPlayer) player;
 		}
 	}
 	
@@ -168,6 +175,8 @@ public class AIController {
 		
 		//easy AI Controller 
 		if (mode.equals("easy")) {
+			
+			System.out.println("Discarding");
 			
 			Queue<Card> tempHand = new LinkedList<Card>();
 			
@@ -242,6 +251,8 @@ public class AIController {
 		
 		
 		if (mode.equals("easy")) {
+			
+			System.out.println("Extended Turn");
 			
 			gameFrame.getCommonPanel().getDeck().setEnabled(false);
 
@@ -322,13 +333,14 @@ public class AIController {
 		
 		if (mode.equals("easy")) {
 			
+			System.out.println("Selling");
+			
 			//only sells at before drawing two cards
 			
 			
 			boolean hasSold = false;
 			int numFields = 2; //number of fields free
-			
-		
+					
 			//check if the third field is owned
 			if (player.isThirdFieldOwned()) 
 				numFields = 3;
