@@ -32,6 +32,7 @@ public class AIController {
 	private DeckController deck;
 	
 	private int[] numCardsInSlot = new int[3];
+	
 	public AIController(String mode, GameFrame gameFrame, GUIController gui, DeckController deck) {
 
 		this.mode = mode;
@@ -179,8 +180,6 @@ public class AIController {
 					hasPlanted = true;
 					
 
-				
-
 				}
 				
 				//add a delay 
@@ -215,6 +214,7 @@ public class AIController {
 			Card discardCard = null;
 			
 			int indexOfDiscard = 0;
+			
 			//look through the whole hand to see if there is not a matching card
 			for (Card i : player.getHand()) {
 				
@@ -326,9 +326,16 @@ public class AIController {
 					}
 
 				}
-
-			
+		
 			}
+		
+			for (int i = 0; i < 3; i++) {
+				
+				System.out.println(gameFrame.getCommonPanel().getSlots()[i].getIcon().toString());
+			}
+
+			//add a delay s
+			Thread.sleep(2000);
 		
 			boolean hasPlanted = true;
 			//check the types of beans offered
@@ -360,7 +367,7 @@ public class AIController {
 							gui.updateField(player, cardSelected, numCardsInSlot[i]) ;
 							
 							gameFrame.getCommonPanel().getNumCardLabel()[i].setText("0");
-							gameFrame.getCommonPanel().getSlots()[i].setEnabled(false);
+						
 							gameFrame.getCommonPanel().getSlots()[i].setIcon(new ImageIcon("Images/slotsBtn.png"));
 						}
 							
@@ -380,16 +387,10 @@ public class AIController {
 			// image...
 			// for cards that were not chosen, disable them for the next player to use
 			for (int i = 0; i < 3; i++) {
-				if (gameFrame.getCommonPanel().getSlots()[i].isEnabled() == false) {
+				if (gameFrame.getCommonPanel().getNumCardLabel()[i].getText().equals("0")) 
 					gameFrame.getCommonPanel().getSlots()[i].setIcon(new ImageIcon("Images/slotsBtn.png"));
-				}
 
-				else {
-					gameFrame.getCommonPanel().getSlots()[i].setEnabled(false);
-				}
-					
-
-		}
+			}
 
 			
 
@@ -547,5 +548,14 @@ public class AIController {
 			}
 		}
 	}
+
+	public int[] getNumCardsInSlot() {
+		return numCardsInSlot;
+	}
+
+	public void setNumCardsInSlot(int[] numCardsInSlot) {
+		this.numCardsInSlot = numCardsInSlot;
+	}
+	
 
 }

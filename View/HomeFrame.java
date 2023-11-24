@@ -57,7 +57,8 @@ public class HomeFrame extends JFrame implements ActionListener{
 			this.dispose();
 		}
 		else if (e.getSource() == instructionBtn) {
-			
+			new InstructionFrame();
+			this.dispose();
 		}
 		else if (e.getSource() == exitBtn) {
 			this.dispose();

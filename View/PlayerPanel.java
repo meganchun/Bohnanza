@@ -73,7 +73,7 @@ public class PlayerPanel extends JPanel {
 		scoreNum = new JLabel(Integer.toString(getScore()));
 		scoreNum.setFont(new Font("Helvetica", Font.BOLD, 12));
 		scoreNum.setForeground(new Color(98,98,98));
-		scoreNum.setBounds(40, 13, 10, 12);
+		scoreNum.setBounds(40, 13, 20, 12);
 		scoreImage.add(scoreNum);
 		
 		

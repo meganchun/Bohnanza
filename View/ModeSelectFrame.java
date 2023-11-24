@@ -48,7 +48,6 @@ public class ModeSelectFrame extends JFrame implements ActionListener{
 		background.setBounds(0, 0, 1000, 700);
 		add(background);
 		
-		
 		modeBackgroundOne = new JLabel(new ImageIcon("Images/modeBackground.png"));
 		modeBackgroundOne.setBounds(114, 170, 333, 429);
 		background.add(modeBackgroundOne);

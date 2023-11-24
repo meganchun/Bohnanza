@@ -11,12 +11,14 @@ import Model.Card;
 
 public class DeckController {
 
-	private final int ENDLIMIT = 30;
+	private final int ENDLIMIT = 100;
 	// instance variables...
 	private Map<Integer, Card> numCardMap;
 	private Stack<Card> cardList = new Stack<Card>();
 	private Stack<Card> discardList = new Stack<Card>();
 	private int garbageKey = 0;
+	
+	private final String[] NAMELIST = {"Red","Black-eyed","Soy","Green","Stink","Chili","Blue"};
 
 	// initialize array constants for the coins
 	private int[] redArr = { 0, 0, 1, 2, 3, 5 };
@@ -40,7 +42,7 @@ public class DeckController {
 	public void setCards() {
 		// create a hashmap for the card objects
 		numCardMap = new HashMap<Integer, Card>();
-
+	
 		// fill the hashmap with number of beans as the key and card objects as the
 		// value
 		numCardMap.put(1, new Card("Red", 8, redArr, "Red.png"));
@@ -124,6 +126,21 @@ public class DeckController {
 			return true;
 		
 		return false;
+	}
+	
+	public int findKeyNum(String beanName) {
+		
+		int index = 0;
+		
+		for (String bean : NAMELIST) {
+			
+			if (bean.equals(beanName)) 
+				return index+1;
+			
+			index++;
+		}
+		
+		return index;
 	}
 
 	public Card pop() {

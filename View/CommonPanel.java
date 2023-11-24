@@ -18,7 +18,7 @@ public class CommonPanel extends JPanel {
 	private JButton discardButton = new JButton();
 	private JButton endExtendBtn = new JButton();
 	private JLabel stage = new JLabel("Current Stage:");
-	private JTextArea currentStage = new JTextArea("Plant/Discard Drawed Cards", 10, 10);
+	private JTextArea currentStage = new JTextArea("Plant/Discard", 10, 10);
 
 
 	// constructor
