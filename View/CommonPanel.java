@@ -18,7 +18,7 @@ public class CommonPanel extends JPanel {
 	private JButton discardButton = new JButton();
 	private JButton endExtendBtn = new JButton();
 	private JLabel stage = new JLabel("Current Stage:");
-	private JLabel staage;
+	private JTextArea currentStage = new JTextArea("Plant/Discard Drawed Cards", 10, 10);
 
 
 	// constructor
@@ -26,6 +26,21 @@ public class CommonPanel extends JPanel {
 		
 		setLayout(null);
 
+		//current stage label
+		stage.setBounds(10,50,150,50);
+		stage.setForeground(Color.WHITE);
+		stage.setFont(new Font("Helvetica", Font.BOLD, 16));
+		add(stage);
+		
+		currentStage.setBounds(10,100,125,50);
+		currentStage.setForeground(Color.WHITE);
+		currentStage.setEditable(false);
+		currentStage.setOpaque(false);
+		currentStage.setFont(new Font("Helvetica", Font.BOLD, 16));
+		currentStage.setLineWrap(true);
+		currentStage.setWrapStyleWord(true);
+		add(currentStage);
+		
 		// set images for the JButtons
 		discardButton.setIcon(new ImageIcon("Images/discardBtn.png"));
 		discardDeck.setIcon(new ImageIcon("Images/discardDeck.png"));
@@ -43,7 +58,7 @@ public class CommonPanel extends JPanel {
 		endExtendBtn.setEnabled(false);
 
 		// pack the JButtons by settingBounds
-		discardDeck.setBounds(86, 35, 110, 153);
+		discardDeck.setBounds(150, 35, 110, 153);
 		add(discardDeck);
 		deck.setBounds(283, 35, 110, 153);
 		add(deck);
@@ -128,6 +143,14 @@ public class CommonPanel extends JPanel {
 
 	public void setNumCardLabel(JLabel[] numCardLabel) {
 		this.numCardLabel = numCardLabel;
+	}
+
+	public JTextArea getCurrentStage() {
+		return currentStage;
+	}
+
+	public void setCurrentStage(JTextArea currentStage) {
+		this.currentStage = currentStage;
 	}
 
 }

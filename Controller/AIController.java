@@ -116,6 +116,7 @@ public class AIController {
 			Thread.sleep(2000);
 			
 			player.setCurrentStage(2);
+			gameFrame.getCommonPanel().getCurrentStage().setText(BohnanzaController.STAGES[1]);
 			plant(player);
 		
 		}
@@ -264,6 +265,7 @@ public class AIController {
 					    JOptionPane.INFORMATION_MESSAGE, player.getPanel().getHand().getPlantIcon());
 			
 			player.setCurrentStage(3);
+			gameFrame.getCommonPanel().getCurrentStage().setText(BohnanzaController.STAGES[2]);
 			
 			//add a delay 
 			Thread.sleep(2000);
@@ -395,6 +397,8 @@ public class AIController {
 			Thread.sleep(2000);
 			
 			sell(player);
+			
+			gameFrame.getCommonPanel().getCurrentStage().setText("Selling");
 		}
 		
 		//hard AI Controller 
@@ -449,6 +453,7 @@ public class AIController {
 			Thread.sleep(3000);
 			
 			drawToEndTurn(player);
+			gameFrame.getCommonPanel().getCurrentStage().setText("End Turn");
 		}
 		
 		//hard AI Controller 
@@ -483,6 +488,7 @@ public class AIController {
 		
 		//return the current player to the first stage
 		player.setCurrentStage(1);
+		gameFrame.getCommonPanel().getCurrentStage().setText(BohnanzaController.STAGES[0]);
 		
 		gui.disableInactiveComponents(player);
 		BohnanzaController.getGameFrame().getCommonPanel().getDiscardButton().setEnabled(true);

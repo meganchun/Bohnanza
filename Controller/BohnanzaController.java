@@ -62,6 +62,8 @@ public class BohnanzaController implements ActionListener {
 	
 	Queue<Card> q = new LinkedList<>();
 	Queue<Card> q1 = new LinkedList<>();
+	
+	public static final String[] STAGES = {"Plant/Discard Offered Cards", "Plant and Discard", "Extended Turn", "Pick Up Two Cards"};
 
 	
 	Card cardDiscard;
@@ -274,6 +276,7 @@ public class BohnanzaController implements ActionListener {
 			
 				firstTurn = false;
 				currentPlayer.setCurrentStage(2);
+				gameFrame.getCommonPanel().getCurrentStage().setText(STAGES[1]);
 				
 			}
 			// otherwise, perform the following
@@ -312,6 +315,9 @@ public class BohnanzaController implements ActionListener {
 	
 					gameFrame.getCommonPanel().getDiscardButton().setEnabled(false);
 					gui.enablePlayersHand(currentPlayer);
+					
+					
+					gameFrame.getCommonPanel().getCurrentStage().setText(STAGES[1]);
 				}
 			}
 		}
@@ -420,6 +426,7 @@ public class BohnanzaController implements ActionListener {
 				gui.enablePlayersHand(currentPlayer);
 				
 				currentPlayer.setCurrentStage(3);
+				gameFrame.getCommonPanel().getCurrentStage().setText(STAGES[2]);
 			}
 			
 			
@@ -500,6 +507,7 @@ public class BohnanzaController implements ActionListener {
 				JOptionPane.showMessageDialog(gameFrame,
 						currentPlayer.getName() + " finished their extended turn, draw 2 cards!");
 				currentPlayer.setCurrentStage(4);
+				gameFrame.getCommonPanel().getCurrentStage().setText(STAGES[3]);
 			}
 			
 		
@@ -556,7 +564,7 @@ public class BohnanzaController implements ActionListener {
 					numOfCardsDrawed = 0; // reset number of cards drawn
 					numOfPlants = 0; //reset number of plants counter
 	
-
+					gameFrame.getCommonPanel().getCurrentStage().setText(STAGES[0]);
 					JOptionPane.showMessageDialog(gameFrame, currentPlayer.getName()
 							+ "'s Turn. You can choose to plant or discard the cards in the middle to procced.");
 
