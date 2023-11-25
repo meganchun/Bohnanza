@@ -9,7 +9,6 @@ public interface Turn {
 	public boolean sell(int fieldNum);
 	
 	public String extendedTurn();
-	
-	public boolean purchaseBeanField(int coins);
+
 	
 }

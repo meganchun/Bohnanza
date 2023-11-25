@@ -61,7 +61,7 @@ public class HomeFrame extends JFrame implements ActionListener{
 			this.dispose();
 		}
 		else if (e.getSource() == exitBtn) {
-			this.dispose();
+			System.exit(0);
 		}
 			
 	

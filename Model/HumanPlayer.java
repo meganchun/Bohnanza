@@ -52,12 +52,6 @@ public class HumanPlayer extends Player implements Turn {
 	}
 
 	@Override
-	public boolean purchaseBeanField(int coins) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public boolean sell(int fieldNum) {
 		
 		if (this.getNumBeansInField()[fieldNum] != 0) {
@@ -67,7 +61,7 @@ public class HumanPlayer extends Player implements Turn {
 			if (this.getNumBeansInField()[fieldNum] == 1) {
 				
 				for (int i = 0; i < 3; i++) {
-					if (this.getNumBeansInField()[fieldNum] > 1)
+					if (this.getNumBeansInField()[i] > 1 && i != fieldNum)
 						return false;
 				}
 				

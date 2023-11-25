@@ -82,6 +82,9 @@ public class GUIController {
 			player.getPanel().getHand().getHandScrollPane().setViewportView(newHandPanel);
 			
 		}
+		else {
+			player.getPanel().getHand().getHandPanel().removeAll();
+		}
 		
 	}
 	
@@ -145,7 +148,8 @@ public class GUIController {
 	
 	public void unlockField(Player player) {
 		
-		player.getPanel().getField().getCardImages()[2].setIcon(new ImageIcon("Images/tempCard.png"));
+		player.setThirdFieldOwned(true);
+		player.getPanel().getField().getCardImages()[2].setIcon(new ImageIcon("Images/slotsBtn.png"));
 		player.getPanel().getField().getActionBtns()[2].setIcon(new ImageIcon("Images/sellBtn.png"));
 	
 	}
@@ -156,6 +160,7 @@ public class GUIController {
 		//disable plant and discard button
 		player.getPanel().getHand().getDiscardBtn().setEnabled(false);
 		player.getPanel().getHand().getPlantBtn().setEnabled(false);
+		player.getPanel().getHand().getDoneBtn().setEnabled(false);
 		
 		//disable cards in hand
 		for (JRadioButton b : player.getPanel().getHand().getCardsInHand()) {

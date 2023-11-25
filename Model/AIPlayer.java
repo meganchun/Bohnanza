@@ -42,20 +42,33 @@ public class AIPlayer extends Player implements Turn {
 
 	@Override
 	public boolean sell(int fieldNum) {
-		// TODO Auto-generated method stub
-		return false;
+		
+		if (this.getNumBeansInField()[fieldNum] != 0) {
+			
+			//if you are trying to sell a field with only one bean...
+			//make sure the other fields have only one bean
+			if (this.getNumBeansInField()[fieldNum] == 1) {
+				
+				for (int i = 0; i < 3; i++) {
+					if (this.getNumBeansInField()[fieldNum] > 1)
+						return false;
+				}
+				
+				return true;
+			}
+			else 
+				return true;
+		}
+		else 
+			return false;
+	
+		
 	}
 
 	@Override
 	public String extendedTurn() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public boolean purchaseBeanField(int coins) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	public String getMode() {

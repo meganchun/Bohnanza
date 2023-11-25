@@ -1,7 +1,6 @@
 /* Aaron Su
  * 
  */
-
 // // sourced from https://www.javatpoint.com/java-jscrollpane
 
 package View;
@@ -21,6 +20,7 @@ public class InstructionFrame extends JFrame implements ActionListener {
 	private JLabel[] imageLabel = new JLabel[7];
 
 	public InstructionFrame() {
+		
 		JLabel background = new JLabel(new ImageIcon("Images/instructionBackground.png"));
 		background.setBounds(0, 0, 1000, 700);
 		add(background);
@@ -67,7 +67,7 @@ public class InstructionFrame extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == exitBtn) {
-			new ModeSelectFrame(); // open the previous frame
+			new HomeFrame(); // open the previous frame
 			this.dispose(); // get rid of the current frame
 		}
 

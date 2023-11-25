@@ -1,5 +1,6 @@
 package View;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,11 +35,14 @@ public class GameEnd extends JFrame implements ActionListener {
 		add(background);
 		
 		winnerLabel = new JLabel(new ImageIcon("Images/winnerLabel.png"));
-		winnerLabel.setBounds(352, 213, 350, 100);
+		winnerLabel.setBounds(325, 213, 350, 100);
 		background.add(winnerLabel);
 		
-		winner = new JLabel(player.getName(),SwingConstants.CENTER);
-		winner.setFont(new Font("Helvetica", Font.BOLD, 20));
+		winner = new JLabel(player.getName());
+		winner.setBounds(0, 300, 1000, 100);
+		winner.setHorizontalAlignment(JLabel.CENTER);
+		winner.setFont(new Font("Helvetica", Font.BOLD, 50));
+		winner.setForeground(new Color(229, 60, 60));
 		background.add(winner);
 		
 		

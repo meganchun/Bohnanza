@@ -41,6 +41,9 @@ public class PlayerHandPanel extends JPanel {
 	private Icon plantIcon = new ImageIcon("Images/plantCardBtn.png");
 	private JButton plantBtn = new JButton(plantIcon);
 	
+	private Icon doneIcon = new ImageIcon("Images/doneBtn.png");
+	private JButton doneBtn = new JButton(doneIcon);
+	
 	private ArrayList<JRadioButton> cardsInHand;
 	private ButtonGroup cardsButtons;
 	
@@ -51,13 +54,13 @@ public class PlayerHandPanel extends JPanel {
 		addCards(player);
 		
 		
+		
 		handScrollPane = new JScrollPane(handPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		handScrollPane.setOpaque(false);
 		handScrollPane.setPreferredSize(new Dimension(250, 180));
 		add(handScrollPane);
-
 		
-		//add the panel to the two buttons
+		//add the panel to the three buttons
 		btnPanel = new JPanel();
 		btnPanel.setOpaque(false);
 		btnPanel.setPreferredSize(new Dimension(117,200));
@@ -70,6 +73,10 @@ public class PlayerHandPanel extends JPanel {
 		//add the discard button
 		plantBtn.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); //remove border from button
 		btnPanel.add(plantBtn);
+		
+		//add the discard button
+		doneBtn.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); //remove border from button
+		btnPanel.add(doneBtn);
 		
 	
 	}
@@ -137,12 +144,16 @@ public class PlayerHandPanel extends JPanel {
 	public void setHandScrollPane(JScrollPane handScrollPane) {
 		this.handScrollPane = handScrollPane;
 	}
+	public JButton getDoneBtn() {
+		return doneBtn;
+	}
+
+	public void setDoneBtn(JButton doneBtn) {
+		this.doneBtn = doneBtn;
+	}
 
 	
 	//UTLITLY METHODS	
-
-
-	
 
 
 	public void addItemListeners(JRadioButton[] buttons) {
