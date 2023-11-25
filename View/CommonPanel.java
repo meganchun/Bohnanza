@@ -4,7 +4,6 @@ package View;
 
 import java.awt.Color;
 import java.awt.Font;
-
 import javax.swing.*;
 
 @SuppressWarnings("serial")
@@ -14,6 +13,7 @@ public class CommonPanel extends JPanel {
 	private JButton discardDeck = new JButton();
 	private JButton deck = new JButton();
 	private JButton[] slots = new JButton[3];
+	private JLabel deckCounter = new JLabel();
 	private JLabel [] numCardLabel = new JLabel[3];
 	private JButton discardButton = new JButton();
 	private JButton endExtendBtn = new JButton();
@@ -62,6 +62,13 @@ public class CommonPanel extends JPanel {
 		add(discardDeck);
 		deck.setBounds(283, 35, 110, 153);
 		add(deck);
+		
+		// pack the card counter
+		deckCounter.setText("");
+		deckCounter.setFont(new Font("Helvetica", Font.BOLD, 16));
+		deckCounter.setForeground(Color.WHITE);
+		deckCounter.setBounds(333, 15, 20, 20);
+		add(deckCounter);
 
 		// initialize the JButtons for the slots
 		int xCord = 433;
@@ -151,6 +158,14 @@ public class CommonPanel extends JPanel {
 
 	public void setCurrentStage(JTextArea currentStage) {
 		this.currentStage = currentStage;
+	}
+	
+	public JLabel getDeckCounter() {
+		return deckCounter;
+	}
+
+	public void setDeckCounter(JLabel deckCounter) {
+		this.deckCounter = deckCounter;
 	}
 
 }

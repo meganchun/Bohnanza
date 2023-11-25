@@ -1,4 +1,4 @@
-//Megan Chun
+//Megan Chun, Aaron Su
 
 package View;
 
