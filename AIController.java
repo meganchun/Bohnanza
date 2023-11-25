@@ -84,6 +84,7 @@ public class AIController {
 							// update the field
 							gui.updateField(player, cardSelected, numCardsInSlot[i]);
 
+							numCardsInSlot[i] = 0;
 							gameFrame.getCommonPanel().getNumCardLabel()[i].setText("0");
 							gameFrame.getCommonPanel().getSlots()[i].setEnabled(false);
 							gameFrame.getCommonPanel().getSlots()[i].setIcon(new ImageIcon("Images/slotsBtn.png"));
@@ -225,15 +226,14 @@ public class AIController {
 
 					gui.updateHand(player);
 
-					JOptionPane.showMessageDialog(gameFrame,
-							player.getName() + " Planted A " + player.getHand().peek().getBeanType() + " Bean.",
-							"Bean Planted!", JOptionPane.INFORMATION_MESSAGE,
-							player.getPanel().getHand().getPlantIcon());
-
 					player.getHand().remove();
 
 					hasPlanted = true;
 
+					JOptionPane.showMessageDialog(gameFrame,
+							player.getName() + " Planted A " + player.getHand().peek().getBeanType() + " Bean.",
+							"Bean Planted!", JOptionPane.INFORMATION_MESSAGE,
+							player.getPanel().getHand().getPlantIcon());
 				}
 
 				// add a delay
@@ -417,7 +417,9 @@ public class AIController {
 				numCardsInSlot[i] += 1;
 				gameFrame.getCommonPanel().getNumCardLabel()[i].setText(String.valueOf(numCardsInSlot[i]));
 
-				validateCards(i);
+				Card cardSelected = checkCardTypeSelected(gameFrame.getCommonPanel().getSlots()[i].getIcon().toString());
+
+				validateCards(i, cardSelected);
 
 				// check if the top card on the discard pile is the same as one of the cards in
 				// the slots...
@@ -527,6 +529,8 @@ public class AIController {
 			gameFrame.getCommonPanel().getCurrentStage().setText("Selling");
 		}
 
+		// -----------------------------------------------------------------------------------------------------------------------------
+
 		// hard AI Controller
 		else {
 
@@ -540,7 +544,7 @@ public class AIController {
 				numCardsInSlot[i] += 1;
 				gameFrame.getCommonPanel().getNumCardLabel()[i].setText(String.valueOf(numCardsInSlot[i]));
 
-				validateCards(i);
+				validateCards(i, cardDiscard);
 
 				// while the top card on the discard pile is the same as one of the cards in
 				// the slots...
@@ -597,18 +601,17 @@ public class AIController {
 
 					// if the offered and the field match
 					if (fileNameInOffered.equals(fileNameInField) && player.getNumBeansInField()[j] != 0) {
-						System.out.println("Opt 1 Extended Turn");
 
 						Card cardSelected = checkCardTypeSelected(fileNameInOffered);
 
-						JOptionPane.showMessageDialog(gameFrame,
-								(player.getName() + " Planted A " + player.getBeansInField()[i].getBeanType()
-										+ " Bean"),
-								"Bean Planted!", JOptionPane.INFORMATION_MESSAGE,
-								player.getPanel().getHand().getPlantIcon());
-
 						// update the field
 						gui.updateField(player, cardSelected, numCardsInSlot[i]);
+//						
+//						JOptionPane.showMessageDialog(gameFrame,
+//								(player.getName() + " Planted A " + player.getBeansInField()[i].getBeanType()
+//										+ " Bean"),
+//								"Bean Planted!", JOptionPane.INFORMATION_MESSAGE,
+//								player.getPanel().getHand().getPlantIcon());
 
 						numCardsInSlot[i] = 0;
 						gameFrame.getCommonPanel().getNumCardLabel()[i].setText(String.valueOf(numCardsInSlot[i]));
@@ -617,21 +620,58 @@ public class AIController {
 						break;
 					}
 
+					// if there is an empty field
+					else if (tempPlayer.getPanel().getField().getCardCounter()[j].getText().equals("0")) {
+						
+						// check if there are multiple in that slot
+						if (numCardsInSlot[i] > 1) {
+							// check if the beanometer of those cards allow for coins to be made
+							Card cardSelected = checkCardTypeSelected(fileNameInOffered);
+
+							if (cardSelected.getCoinsEarned(numCardsInSlot[i]) > 0) {
+								// update the field
+								gui.updateField(player, cardSelected, numCardsInSlot[i]);
+
+								numCardsInSlot[i] = 0;
+								gameFrame.getCommonPanel().getNumCardLabel()[i]
+										.setText(String.valueOf(numCardsInSlot[i]));
+								gameFrame.getCommonPanel().getSlots()[i].setIcon(new ImageIcon("Images/slotsBtn.png"));
+							}
+						}
+						
+						else {
+							// update the empty field with the a card from the drawn cards
+							Card cardSelected = checkCardTypeSelected(fileNameInOffered);
+							
+							// update the field
+							gui.updateField(player, cardSelected, numCardsInSlot[i]);
+
+							numCardsInSlot[i] = 0;
+							gameFrame.getCommonPanel().getNumCardLabel()[i]
+									.setText(String.valueOf(numCardsInSlot[i]));
+							gameFrame.getCommonPanel().getSlots()[i].setIcon(new ImageIcon("Images/slotsBtn.png"));
+						}
+					}
+
 					// if the offered and the field do not match, but there are multiple cards in
 					// that slot
 					else if (numCardsInSlot[i] > 1) {
-						System.out.println("Opt 2 Extended Turn");
 
 						// check if the beanometer of those cards allow for coins to be made
 						Card cardSelected = checkCardTypeSelected(fileNameInOffered);
 
 						if (cardSelected.getCoinsEarned(numCardsInSlot[i]) > 0) {
-							int removeIndex = 0;
+
+							int sellNumBeansInField = 0;
 
 							// sell the field with the least amount of cards
 							for (int y = j + 1; y < numFields; y++) {
 								if (tempPlayer.getNumBeansInField()[j] > tempPlayer.getNumBeansInField()[y]) {
-									removeIndex = y;
+									sellNumBeansInField = tempPlayer.getNumBeansInField()[y];
+								}
+
+								else {
+									sellNumBeansInField = tempPlayer.getNumBeansInField()[j];
 								}
 							}
 
@@ -639,14 +679,15 @@ public class AIController {
 							Card tempCard = checkCardTypeSelected(fileNameInField);
 
 							// increment the AI's score
-							tempPlayer.setScore(tempPlayer.getScore() + tempCard.getCoinsEarned(removeIndex));
+							tempPlayer.setScore(tempCard.getCoinsEarned(sellNumBeansInField));
+							gui.updateScore(tempPlayer);
 
 							// update that field with the new cards from the slots
-							JOptionPane.showMessageDialog(gameFrame,
-									(player.getName() + " Planted A " + player.getBeansInField()[i].getBeanType()
-											+ " Bean"),
-									"Bean Planted!", JOptionPane.INFORMATION_MESSAGE,
-									player.getPanel().getHand().getPlantIcon());
+//							JOptionPane.showMessageDialog(gameFrame,
+//									(player.getName() + " Planted A " + player.getBeansInField()[i].getBeanType()
+//											+ " Bean"),
+//									"Bean Planted!", JOptionPane.INFORMATION_MESSAGE,
+//									player.getPanel().getHand().getPlantIcon());
 
 							// update the field
 							gui.updateField(player, cardSelected, numCardsInSlot[i]);
@@ -785,8 +826,10 @@ public class AIController {
 						.setIcon(new ImageIcon("Images/Beans/" + deck.pop().getFileName()));
 				numCardsInSlot[i] += 1;
 				gameFrame.getCommonPanel().getNumCardLabel()[i].setText(String.valueOf(numCardsInSlot[i]));
+				
+				Card cardSelected = checkCardTypeSelected(gameFrame.getCommonPanel().getSlots()[i].getIcon().toString());
 
-				validateCards(i);
+				validateCards(i, cardSelected);
 			}
 
 			gameFrame.getCommonPanel().getSlots()[i].setEnabled(condition);
@@ -794,24 +837,26 @@ public class AIController {
 		}
 	}
 
-	private void validateCards(int i) {
+	private void validateCards(int i, Card cardSelected) {
 		for (int x = 0; x < 3; x++) {
-
 			// check if there are duplicates of cards in the slots
 			if (gameFrame.getCommonPanel().getSlots()[x].getIcon().toString()
-					.equals(gameFrame.getCommonPanel().getSlots()[i].getIcon().toString()) && x != i) {
+					.equals("Images/Beans/" + cardSelected.getFileName().toString()) && x != i) {
 
 				numCardsInSlot[i] += 1;
 				gameFrame.getCommonPanel().getNumCardLabel()[i].setText(String.valueOf(numCardsInSlot[i]));
 				gameFrame.getCommonPanel().getSlots()[x]
 						.setIcon(new ImageIcon("Images/Beans/" + deck.pop().getFileName()));
+				
+				System.out.println("VALIDATE CARDS: Image in Slot " + i + " is " + cardSelected.getFileName().toString());
+				System.out.println("VALIDATE CARDS: New Image in Slot " + x + " is " + gameFrame.getCommonPanel().getSlots()[x].getIcon().toString());
 			}
 
 			// if it is still equal, recursively call the method again to perform the
 			// actions
-			if ((gameFrame.getCommonPanel().getSlots()[x].getIcon().toString()
-					.equals(gameFrame.getCommonPanel().getSlots()[i].getIcon().toString())) && x != i) {
-				validateCards(i);
+			if (gameFrame.getCommonPanel().getSlots()[x].getIcon().toString()
+					.equals("Images/Beans/" + cardSelected.getFileName().toString()) && x != i) {
+				validateCards(i, cardSelected);
 			}
 		}
 	}
