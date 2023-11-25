@@ -56,6 +56,7 @@ public class BohnanzaController implements ActionListener {
 
 	private int numOfCardsDrawed = 0;
 	private int[] numCardsInSlot = new int[3];
+
 	private int numOfPlants = 0;
 	
 	private boolean firstTurn = true;
@@ -127,7 +128,6 @@ public class BohnanzaController implements ActionListener {
 		gameFrame.getCommonPanel().getEndExtendBtn().addActionListener(this);
 		gameFrame.getCommonPanel().getDiscardDeck().addActionListener(this);
 
-		//Aaron ----
 		// Create action listeners for each of the 3 cards drawn from the deck
 		for (int i = 0; i < 3; i++) {
 			int index = i;
@@ -148,6 +148,7 @@ public class BohnanzaController implements ActionListener {
 						//update the field
 						gui.updateField(currentPlayer, cardSelected, numCardsInSlot[index]) ;
 						
+						numCardsInSlot[index] = 0;
 						gameFrame.getCommonPanel().getNumCardLabel()[index].setText("0");
 						gameFrame.getCommonPanel().getSlots()[index].setEnabled(false);
 						gameFrame.getCommonPanel().getSlots()[index].setIcon(new ImageIcon("Images/slotsBtn.png"));
@@ -252,9 +253,6 @@ public class BohnanzaController implements ActionListener {
 			for (int i = 0; i < 3; i++) {
 				p.getField().getActionBtns()[i].addActionListener(this);
 			}
-		
-
-		//-----------
 	}
 	
 	
