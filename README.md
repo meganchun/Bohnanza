@@ -6,9 +6,9 @@ Bohnanza Online brings the beloved card game Bohnanza to the digital realm, allo
 
 ## Features
 
-- **PvP and PvC Modes:** Play against friends or test your skills against the computer with an easy or hard mode.
-- **Turn-Based Interaction:** Only the active player can interact with game components during their turn, ensuring fair play with restricted access.
-- **Fully Functional Gameplay:** Experience the complete mechanics of Bohnanza with intuitive online controls.
+- **💻 PvP and PvC Modes:** Play against friends or test your skills against the computer with an easy or hard mode.
+- **🎮 Turn-Based Interaction:** Only the active player can interact with game components during their turn, ensuring fair play with restricted access.
+- **👾 Fully Functional Gameplay:** Experience the complete mechanics of Bohnanza with intuitive online controls.
 
 ## Key Concepts
 - Stacks, Queues, Hashmaps, Java Swing GUI, OOP
